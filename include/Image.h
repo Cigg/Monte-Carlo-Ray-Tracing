@@ -1,9 +1,7 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
-struct Rgb {
-	float r, g, b;
-};
+#include <glm/glm.hpp>
 
 class Image {
 public:
@@ -11,7 +9,7 @@ public:
 	Image(int width, int height);
 	~Image();
 
-	void SetPixel(int x, int y, Rgb &pixelValue);
+	void SetPixel(int x, int y, glm::vec3 &pixelValue);
 	void WritePPM(char* filename);
 	int GetWidth();
 	int GetHeight();
@@ -20,7 +18,7 @@ public:
 private:
 	unsigned int width;
 	unsigned int height;
-	Rgb* pixels;
+	glm::vec3* pixels;
 };
 
 #endif // IMAGE_H

@@ -6,23 +6,21 @@
 Image::Image() {
     width = 512;
     height = 512;
-    pixels = new Rgb[width * height];
+    pixels = new glm::vec3[width * height];
 }
 
 Image::Image(int w, int h) {
     width = w;
     height = h;
-    pixels = new Rgb[width * height];
+    pixels = new glm::vec3[width * height];
 }
 
 Image::~Image() {
     delete[] pixels;
 }
 
-void Image::SetPixel(int x, int y, Rgb &pixelValue) {
-    pixels[width*y + x].r = pixelValue.r;
-    pixels[width*y + x].g = pixelValue.g;
-    pixels[width*y + x].b = pixelValue.b;
+void Image::SetPixel(int x, int y, glm::vec3 &pixelValue) {
+    pixels[width*y + x] = pixelValue;
 }
 
 void Image::WritePPM(char* filename) {

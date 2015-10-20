@@ -3,9 +3,12 @@
 
 #include <glm/glm.hpp>
 
+#include "Ray.h"
+
 class Shape {
 public:
-	virtual bool Intersect(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, float &hitDist, glm::vec3 &color) = 0;
+	virtual bool Intersect(const Ray &ray, float &hitDist) = 0;
+	virtual glm::vec3 GetColor(glm::vec3 &pos);
 	void SetPosition(glm::vec3 pos);
 	glm::vec3 GetPosition();
 

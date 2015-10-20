@@ -8,7 +8,8 @@ public:
 	Walls();
 	~Walls();
 
-	bool Intersect(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, float &hitDist, glm::vec3 &color);
+	bool Intersect(const Ray &ray, float &hitDist);
+	glm::vec3 GetColor(glm::vec3 &pos);
 
 protected:
 	float xl, xr, yl, yr, zl, zr;

@@ -13,28 +13,26 @@ Walls::~Walls() {
 	
 }
 
-bool Walls::Intersect(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, float &hitDist, glm::vec3 &color) {
+bool Walls::Intersect(const Ray &ray, float &hitDist) {
     
     float xmin, xmax, ymin, ymax, zmin, zmax;
 
-    if(rayDirection.x > 0.0f) {
-    	xmin = (xl - rayOrigin.x) / rayDirection.x;
-    	xmax = (xr - rayOrigin.x) / rayDirection.x;
-    	color = glm::vec3(0.0f, 1.0f, 0.0f); // Right wall
+    if(ray.direction.x > 0.0f) {
+    	xmin = (xl - ray.origin.x) / ray.direction.x;
+    	xmax = (xr - ray.origin.x) / ray.direction.x;
     }
     else {
-    	xmin = (xr - rayOrigin.x) / rayDirection.x;
-    	xmax = (xl - rayOrigin.x) / rayDirection.x;
-    	color = glm::vec3(1.0f, 0.0f, 0.0f); // Left wall
+    	xmin = (xr - ray.origin.x) / ray.direction.x;
+    	xmax = (xl - ray.origin.x) / ray.direction.x;
     }
 
-    if(rayDirection.y > 0.0f) {
-    	ymin = (yl - rayOrigin.y) / rayDirection.y;
-    	ymax = (yr - rayOrigin.y) / rayDirection.y;
+    if(ray.direction.y > 0.0f) {
+    	ymin = (yl - ray.origin.y) / ray.direction.y;
+    	ymax = (yr - ray.origin.y) / ray.direction.y;
     }
     else {
-    	ymin = (yr - rayOrigin.y) / rayDirection.y;
-    	ymax = (yl - rayOrigin.y) / rayDirection.y;
+    	ymin = (yr - ray.origin.y) / ray.direction.y;
+    	ymax = (yl - ray.origin.y) / ray.direction.y;
     }
 
     if(xmin > ymax || ymin > xmax) {
@@ -45,7 +43,6 @@ bool Walls::Intersect(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection,
 
     if(ymin > xmin) {
     	min = ymin;
-    	color = glm::vec3(0.8f, 0.8f, 0.8f); // Ceiling or floor
     }
     else {
     	min = xmin;
@@ -58,13 +55,13 @@ bool Walls::Intersect(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection,
     	max = xmax;
     }
 
-    if(rayDirection.z > 0.0f) {
-    	zmin = (zl - rayOrigin.z) / rayDirection.z;
-    	zmax = (zr - rayOrigin.z) / rayDirection.z;
+    if(ray.direction.z > 0.0f) {
+    	zmin = (zl - ray.origin.z) / ray.direction.z;
+    	zmax = (zr - ray.origin.z) / ray.direction.z;
     }
     else {
-    	zmin = (zr - rayOrigin.z) / rayDirection.z;
-    	zmax = (zl - rayOrigin.z) / rayDirection.z;
+    	zmin = (zr - ray.origin.z) / ray.direction.z;
+    	zmax = (zl - ray.origin.z) / ray.direction.z;
     }
 
     if(min > zmax || zmin > max) {
@@ -78,8 +75,14 @@ bool Walls::Intersect(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection,
 
     if(zmax < max) {
     	max = zmax;
-    	color = glm::vec3(0.6f, 0.6f, 0.6f); // Back wall
     }
 
+    hitDist = max;
+
     return true;
+}
+
+glm::vec3 Walls::GetColor(glm::vec3 &pos) {
+    // TODO: Calc cornell box colors. Red on left side, blue/green on right side
+    return glm::vec3(0.8f);
 }
