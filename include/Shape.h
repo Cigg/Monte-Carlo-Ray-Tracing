@@ -5,7 +5,7 @@
 
 class Shape {
 public:
-	virtual bool Intersect(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, float &hitDist) = 0;
+	virtual bool Intersect(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, float &hitDist, glm::vec3 &color) = 0;
 	void SetPosition(glm::vec3 pos);
 	glm::vec3 GetPosition();
 

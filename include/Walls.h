@@ -1,18 +1,17 @@
-#ifndef SPHERE_H
-#define SPHERE_H
+#ifndef WALLS_H
+#define WALLS_H
 
 #include "Shape.h"
 
-class Sphere : public Shape {
+class Walls : public Shape {
 public:
-	Sphere();
-	Sphere(float radius);
-	~Sphere();
+	Walls();
+	~Walls();
 
 	bool Intersect(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, float &hitDist, glm::vec3 &color);
 
 protected:
-	float radius;
+	float xl, xr, yl, yr, zl, zr;
 };
 
-#endif // SPHERE_H
+#endif // WALLS_H

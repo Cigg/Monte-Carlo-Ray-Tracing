@@ -3,10 +3,13 @@
 
 #include "Image.h"
 #include "Sphere.h"
+#include "Walls.h"
 
 int main() {
-	Sphere sphere;
-	sphere.SetPosition(glm::vec3(0.0, 0.0, -5.0));
+	Walls walls;
+
+	Sphere sphere(0.1f);
+	sphere.SetPosition(glm::vec3(0.0, 0.0, -1.0));
 
 	Image img;
 	float fov = 30.0f;
@@ -27,14 +30,19 @@ int main() {
 			rgb.g = 0.0f;
 			rgb.b = 0.0f;
 
+			glm::vec3 color;
             float t;
- 			if(sphere.Intersect(glm::vec3(0.0, 0.0, 1.0), raydir, t)) {
- 				rgb.r = 1.0f;
+ 			if(walls.Intersect(glm::vec3(0.0, 0.0, 0.0), raydir, t, color)) {
+ 				rgb.r = color.x;
+ 				rgb.g = color.y;
+ 				rgb.b = color.z;
  			}
- 			else {
 
+ 			if(sphere.Intersect(glm::vec3(0.0, 0.0, 0.0), raydir, t, color)) {
+ 				rgb.r = color.x;
+ 				rgb.g = color.y;
+ 				rgb.b = color.z;
  			}
-            //std::cout << "t: " << t << std::endl;
 
 			img.SetPixel(x, y, rgb);
 		}	

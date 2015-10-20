@@ -10,9 +10,9 @@ public:
 	Light(glm::vec3 color, glm::vec3 position);
 	~Light();
 
-	private:
+private:
 	glm::vec3 color;
 	glm::vec3 position;
 };
 
-#endif /* defined(LIGHT_H) */
+#endif // LIGHT_H

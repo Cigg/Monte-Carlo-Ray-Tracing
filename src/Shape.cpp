@@ -1,6 +1,6 @@
 #include "Shape.h"
 
-bool Shape::Intersect(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, float &hitDist) {
+bool Shape::Intersect(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, float &hitDist, glm::vec3 &color) {
 	return false;
 }
 

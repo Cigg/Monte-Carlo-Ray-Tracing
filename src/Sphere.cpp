@@ -16,7 +16,7 @@ Sphere::~Sphere() {
 	
 }
 
-bool Sphere::Intersect(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, float &hitDist) {
+bool Sphere::Intersect(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, float &hitDist, glm::vec3 &color) {
 	// Vector from camera to center of sphere
     glm::vec3 l = position - rayOrigin;
 
@@ -37,6 +37,10 @@ bool Sphere::Intersect(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection
     hitDist = tmiddle - t; 
     // Distance to second intersection point
     // hitDist2 = tca + thc; 
+
+    glm::vec3 intersectionPoint = rayOrigin + hitDist*rayDirection;
+    glm::vec3 normal = glm::normalize(intersectionPoint - position);
+    color = glm::vec3(normal.z, 0.0f, 0.0f); // fake shading
 
     return true; 
 }
