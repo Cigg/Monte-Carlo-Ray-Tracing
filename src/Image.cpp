@@ -6,22 +6,20 @@
 Image::Image() {
     width = 512;
     height = 512;
-
-    pixels = new Rgb[width*height];
+    pixels = new Rgb[width * height];
 }
 
 Image::Image(int w, int h) {
     width = w;
     height = h;
-
-    pixels = new Rgb[width*height];
+    pixels = new Rgb[width * height];
 }
 
 Image::~Image() {
     delete[] pixels;
 }
 
-void Image::SetPixel(int x, int y, Rgb pixelValue) {
+void Image::SetPixel(int x, int y, Rgb &pixelValue) {
     pixels[width*y + x].r = pixelValue.r;
     pixels[width*y + x].g = pixelValue.g;
     pixels[width*y + x].b = pixelValue.b;
@@ -34,13 +32,14 @@ void Image::WritePPM(char* filename) {
         if (ofs.fail()) {
             throw("Can't open output file");
         }
+        // PPM header stuff
         ofs << "P6\n" << width << " " << height << "\n255\n";
         unsigned char r, g, b;
-        // loop over each pixel in the Image, clamp and convert to byte format
+        // Loop over each pixel in the Image, clamp and convert to byte format
         for (int i = 0; i < width * height; ++i) {
-            r = static_cast<unsigned char>(std::min(1.0f, pixels[i].r) * 255);
-            g = static_cast<unsigned char>(std::min(1.0f, pixels[i].g) * 255);
-            b = static_cast<unsigned char>(std::min(1.0f, pixels[i].b) * 255);
+            r = static_cast<unsigned char>(std::max(0.0f, std::min(1.0f, pixels[i].r)) * 255);
+            g = static_cast<unsigned char>(std::max(0.0f, std::min(1.0f, pixels[i].g)) * 255);
+            b = static_cast<unsigned char>(std::max(0.0f, std::min(1.0f, pixels[i].b)) * 255);
             ofs << r << g << b;
         }
         ofs.close();
@@ -54,6 +53,12 @@ void Image::WritePPM(char* filename) {
 int Image::GetWidth() {
     return width;
 }
+
 int Image::GetHeight() {
     return height;
 }
+
+float Image::GetAspectRatio() {
+    return width / (float)height;
+}
+
