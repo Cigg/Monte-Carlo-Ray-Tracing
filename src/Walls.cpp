@@ -5,8 +5,8 @@ Walls::Walls() {
 	xr = 1.0f;
 	yl = -1.0f;
 	yr = 1.0f;
-	zl = -4.0f;
-	zr = -2.0f;
+	zl = -1.0f;
+	zr = 1.0f;
 }
 
 Walls::~Walls() {
@@ -20,12 +20,12 @@ bool Walls::Intersect(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection,
     if(rayDirection.x > 0.0f) {
     	xmin = (xl - rayOrigin.x) / rayDirection.x;
     	xmax = (xr - rayOrigin.x) / rayDirection.x;
-    	color = glm::vec3(0.0f, 1.0f, 0.0f);
+    	color = glm::vec3(0.0f, 1.0f, 0.0f); // Right wall
     }
     else {
     	xmin = (xr - rayOrigin.x) / rayDirection.x;
     	xmax = (xl - rayOrigin.x) / rayDirection.x;
-    	color = glm::vec3(1.0f, 0.0f, 0.0f);
+    	color = glm::vec3(1.0f, 0.0f, 0.0f); // Left wall
     }
 
     if(rayDirection.y > 0.0f) {
@@ -45,7 +45,7 @@ bool Walls::Intersect(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection,
 
     if(ymin > xmin) {
     	min = ymin;
-    	color = glm::vec3(0.5f, 0.5f, 0.5f);
+    	color = glm::vec3(0.8f, 0.8f, 0.8f); // Ceiling or floor
     }
     else {
     	min = xmin;
@@ -71,12 +71,14 @@ bool Walls::Intersect(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection,
     	return false;
     }
 
-    if(zmin > min) {
-    	min = zmin;
-    }
+    // We don't have a front wall
+    // if(zmin > min) {
+    // 	min = zmin;
+    // }
 
     if(zmax < max) {
     	max = zmax;
+    	color = glm::vec3(0.6f, 0.6f, 0.6f); // Back wall
     }
 
     return true;
