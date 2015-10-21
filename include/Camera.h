@@ -9,7 +9,7 @@ class Camera {
 public:
 	Camera();
 	~Camera();
-	Ray GetRayDirection(int x, int y, Image* img);
+	Ray GetRayDirection(int x, int y, int p, Image* img);
 
 protected:
 	float fov;

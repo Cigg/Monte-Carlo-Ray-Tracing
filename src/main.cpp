@@ -111,9 +111,13 @@ int main() {
 	//----------------------------
 	for(int x = 0; x < img->GetWidth(); x++) {
 		for(int y = 0; y < img->GetHeight(); y++) {
-			Ray cameraRay = cam->GetRayDirection(x, y, img);
+			glm::vec3 color = glm::vec3(0.0f);
+			for(int p = 0; p < 4; p++) { //Anti-aliasing
+					Ray cameraRay = cam->GetRayDirection(x, y, p, img);
 
-			glm::vec3 color = Radiance(cameraRay);
+					color += Radiance(cameraRay);
+				}
+				color = color * 0.25f;
 			img->SetPixel(x, y, color);
 		}	
 	}
