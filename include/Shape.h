@@ -11,7 +11,7 @@ public:
 	virtual glm::vec3 GetColor(glm::vec3 &pos);
 	void SetPosition(glm::vec3 pos);
 	glm::vec3 GetPosition();
-	glm::vec3 GetRandomPosition();
+	virtual glm::vec3 GetRandomPosition();
 
 	bool isLight;
 	Shape() { isLight = false; }

@@ -61,7 +61,7 @@ glm::vec3 Radiance(Ray &ray) {
 	//for each light
 	for(std::vector<Shape*>::iterator light = lights.begin(); light != lights.end(); ++light) {
 		//add loop to cast multiple shadow rays
-		glm::vec3 target = (*light)->GetPosition();
+		glm::vec3 target = (*light)->GetRandomPosition();
 		Ray shadowRay = Ray();
 		shadowRay.origin = intersectionPos;
 		shadowRay.direction = glm::normalize(target - intersectionPos);
