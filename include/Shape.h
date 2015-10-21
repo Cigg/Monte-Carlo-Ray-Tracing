@@ -7,10 +7,12 @@
 
 class Shape {
 public:
-	virtual bool Intersect(const Ray &ray, float &hitDist) = 0;
-	virtual glm::vec3 GetColor(glm::vec3 &pos);
 	void SetPosition(glm::vec3 pos);
 	glm::vec3 GetPosition();
+	
+	virtual bool Intersect(const Ray &ray, float &hitDist) = 0;
+	virtual glm::vec3 GetColor(glm::vec3 &pos);
+	virtual glm::vec3 GetNormal(glm::vec3 &intersection);
 	virtual glm::vec3 GetRandomPosition();
 
 	bool isLight;

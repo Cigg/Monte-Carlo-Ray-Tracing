@@ -49,6 +49,10 @@ glm::vec3 Sphere::GetColor(glm::vec3 &pos) {
         return glm::vec3(1.0f, 0.0f, 0.0f);
 }
 
+glm::vec3 Sphere::GetNormal(glm::vec3 &intersection) {
+    return glm::normalize(intersection - position);
+}
+
 glm::vec3 Sphere::GetRandomPosition() {
 	//bad random generator? should use modern method?
 	float u = (float)rand()/RAND_MAX;
@@ -57,6 +61,7 @@ glm::vec3 Sphere::GetRandomPosition() {
 	//evenly distributed
 	float theta = 2*M_PI*u;
 	float cosphi = 2*v - 1;
+    //float cosphi = sqrt(v); Dieckmann ? 
 	float phi = acos(cosphi);
 
 	float x = radius * cos(theta) * sin(phi);

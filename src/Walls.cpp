@@ -95,3 +95,25 @@ glm::vec3 Walls::GetColor(glm::vec3 &pos) {
 
     return color;
 }
+
+glm::vec3 Walls::GetNormal(glm::vec3 &intersection) {
+    float epsilon = 0.0001;
+    if(intersection.x < xl + epsilon) {
+        return glm::vec3(1.0f, 0.0f, 0.0f);
+    }
+    else if(intersection.x > xr - epsilon) {
+        return glm::vec3(-1.0f, 0.0f, 0.0f);
+    }
+    else if(intersection.y < yl + epsilon) {
+        return glm::vec3(0.0f, 1.0f, 0.0f);
+    }
+    else if(intersection.y > yr - epsilon) {
+        return glm::vec3(0.0f, -1.0f, 0.0f);
+    }
+    else if(intersection.z < zl + epsilon) {
+        return glm::vec3(0.0f, 0.0f, 1.0f);
+    }
+    else if(intersection.z > zr - epsilon) {
+        return glm::vec3(0.0f, 0.0f, -1.0f);
+    }
+}

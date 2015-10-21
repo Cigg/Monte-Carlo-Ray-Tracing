@@ -16,6 +16,10 @@ glm::vec3 Shape::GetPosition() {
 	return position;
 }
 
+glm::vec3 Shape::GetNormal(glm::vec3 &intersection) {
+	return glm::vec3(0.0f, 1.0f, 0.0f);
+}
+
 glm::vec3 Shape::GetRandomPosition() {
 	//THIS IS WRONG!
 	return glm::vec3(0.0f);

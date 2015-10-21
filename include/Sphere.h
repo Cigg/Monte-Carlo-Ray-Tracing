@@ -11,6 +11,7 @@ public:
 
 	bool Intersect(const Ray &ray, float &hitDist);
 	glm::vec3 GetColor(glm::vec3 &pos);
+	glm::vec3 GetNormal(glm::vec3 &intersection);
 	glm::vec3 GetRandomPosition();
 
 protected:

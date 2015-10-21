@@ -61,18 +61,25 @@ glm::vec3 Radiance(Ray &ray) {
 	//for each light
 	for(std::vector<Shape*>::iterator light = lights.begin(); light != lights.end(); ++light) {
 		//add loop to cast multiple shadow rays
-		glm::vec3 target = (*light)->GetRandomPosition();
-		Ray shadowRay = Ray();
-		shadowRay.origin = intersectionPos;
-		shadowRay.direction = glm::normalize(target - intersectionPos);
+		int numShadowRays = 6;
+		for(int i = 0; i < numShadowRays; i++) {
+			glm::vec3 target = (*light)->GetRandomPosition();
+			Ray shadowRay = Ray();
+			shadowRay.origin = intersectionPos;
+			shadowRay.direction = glm::normalize(target - intersectionPos);
 
-		//if light in sight add light to radiance
-		if(firstIntersection(shadowRay) == (*light)) {
-			//fixa!
-			//float surfaceCos = (closestShape->GetNormal(intersectionPos)).dot(shadowRay.direction);
-			//float lightCos = ((*light)->GetNormal(intersectionPos)).dot(shadowRay.direction);
-			resultColor += (*light)->GetColor(intersectionPos)*closestShape->GetColor(intersectionPos)/3.0f;
+			//if light in sight add light to radiance
+			if(firstIntersection(shadowRay) == (*light)) {
+				float surfaceCos = glm::dot(closestShape->GetNormal(intersectionPos), shadowRay.direction);
+				float lightCos = glm::dot((*light)->GetNormal(intersectionPos), -shadowRay.direction);
+				glm::vec3 surfaceColor = closestShape->GetColor(intersectionPos);
+				glm::vec3 lightColor = (*light)->GetColor(intersectionPos);
+				
+				resultColor += surfaceCos*lightCos*surfaceColor*lightColor;
+			}
 		}
+
+		resultColor /= numShadowRays;
 	}
 	
 	return resultColor; // glm::vec3(glm::length(intersectionPos)/3.0f);
