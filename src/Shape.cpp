@@ -24,3 +24,7 @@ glm::vec3 Shape::GetRandomPosition() {
 	//THIS IS WRONG!
 	return glm::vec3(0.0f);
 }
+
+glm::vec3 Shape::GetRandomDirection(glm::vec3 &pos) {
+	return glm::vec3(0.0f, 1.0f, 0.0f);
+}

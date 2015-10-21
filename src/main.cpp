@@ -13,7 +13,7 @@ std::vector<Shape*> lights;
 
 const glm::vec3 BG_COLOR = glm::vec3(0.0f);
 
-Shape* firstIntersection(Ray& ray) {
+Shape* FirstIntersection(Ray& ray) {
 	float t = 10000.0f;
 	Shape* closestShape = NULL;
 	int counter = 0;
@@ -63,18 +63,17 @@ glm::vec3 Radiance(Ray &ray) {
 		//add loop to cast multiple shadow rays
 		int numShadowRays = 6;
 		for(int i = 0; i < numShadowRays; i++) {
-			glm::vec3 target = (*light)->GetRandomPosition();
 			Ray shadowRay = Ray();
 			shadowRay.origin = intersectionPos;
-			shadowRay.direction = glm::normalize(target - intersectionPos);
+			shadowRay.direction = (*light)->GetRandomDirection(intersectionPos);
 
 			//if light in sight add light to radiance
-			if(firstIntersection(shadowRay) == (*light)) {
+			if(FirstIntersection(shadowRay) == (*light)) {
 				float surfaceCos = glm::dot(closestShape->GetNormal(intersectionPos), shadowRay.direction);
 				float lightCos = glm::dot((*light)->GetNormal(intersectionPos), -shadowRay.direction);
 				glm::vec3 surfaceColor = closestShape->GetColor(intersectionPos);
 				glm::vec3 lightColor = (*light)->GetColor(intersectionPos);
-				
+
 				resultColor += surfaceCos*lightCos*surfaceColor*lightColor;
 			}
 		}
@@ -95,6 +94,10 @@ int main() {
 
 	Sphere* sphere = new Sphere(0.2f);
 	sphere->SetPosition(glm::vec3(0.0, 0.0, -0.5));
+	objects.push_back(sphere);
+
+	sphere = new Sphere(0.3f);
+	sphere->SetPosition(glm::vec3(0.8, -0.5, -0.7));
 	objects.push_back(sphere);
 
 	Sphere* light = new Sphere(0.2f);

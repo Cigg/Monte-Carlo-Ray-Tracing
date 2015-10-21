@@ -14,6 +14,7 @@ public:
 	virtual glm::vec3 GetColor(glm::vec3 &pos);
 	virtual glm::vec3 GetNormal(glm::vec3 &intersection);
 	virtual glm::vec3 GetRandomPosition();
+	virtual glm::vec3 GetRandomDirection(glm::vec3 &pos);
 
 	bool isLight;
 	Shape() { isLight = false; }

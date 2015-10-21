@@ -61,7 +61,6 @@ glm::vec3 Sphere::GetRandomPosition() {
 	//evenly distributed
 	float theta = 2*M_PI*u;
 	float cosphi = 2*v - 1;
-    //float cosphi = sqrt(v); Dieckmann ? 
 	float phi = acos(cosphi);
 
 	float x = radius * cos(theta) * sin(phi);
@@ -69,4 +68,25 @@ glm::vec3 Sphere::GetRandomPosition() {
 	float z = radius * cosphi;
 
 	return position + glm::vec3(x,y,z);
+}
+
+// Returns a random direction from the pos towards this shape
+glm::vec3 Sphere::GetRandomDirection(glm::vec3 &pos) {
+    float u = (float)rand()/RAND_MAX;
+    float v = (float)rand()/RAND_MAX;
+
+    glm::vec3 sw = glm::normalize(position - pos);
+    glm::vec3 su = glm::normalize(glm::cross((abs(sw.x) > 0.1 ? glm::vec3(0, 1, 0) : glm::vec3(1, 0, 0)), sw));
+    glm::vec3 sv = glm::cross(sw, su);
+
+    float cosAngleMax = sqrt(1.0f - radius*radius/glm::dot(pos - position, pos - position));
+    float cosAngle = 1.0f - u + u*cosAngleMax;
+    float sinAngle = sqrt(1.0f - cosAngle*cosAngle);
+    float phi = 2*M_PI*v;
+
+    glm::vec3 l = (float)(sinAngle * cos(phi)) * su +
+                  (float)(sinAngle * sin(phi)) * sv + 
+                  cosAngle * sw;
+
+    return glm::normalize(l);
 }

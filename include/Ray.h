@@ -10,8 +10,6 @@ public:
 
 	glm::vec3 origin;
 	glm::vec3 direction;
-
-private:
 	float importance;
 	int numBounces; // 0 for the ray coming from the camera
 };
