@@ -67,7 +67,7 @@ glm::vec3 Radiance(Ray &ray) {
 		shadowRay.direction = glm::normalize(target - intersectionPos);
 
 		//if light in sight add light to radiance
-		if(firstIntersection(shadowRay) != (*light)) {
+		if(firstIntersection(shadowRay) == (*light)) {
 			//fixa!
 			//float surfaceCos = (closestShape->GetNormal(intersectionPos)).dot(shadowRay.direction);
 			//float lightCos = ((*light)->GetNormal(intersectionPos)).dot(shadowRay.direction);
