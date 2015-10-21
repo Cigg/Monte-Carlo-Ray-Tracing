@@ -15,3 +15,8 @@ void Shape::SetPosition(glm::vec3 pos) {
 glm::vec3 Shape::GetPosition() {
 	return position;
 }
+
+glm::vec3 Shape::GetRandomPosition() {
+	//THIS IS WRONG!
+	return glm::vec3(0.0f);
+}
