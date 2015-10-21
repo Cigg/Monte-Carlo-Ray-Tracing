@@ -83,6 +83,15 @@ bool Walls::Intersect(const Ray &ray, float &hitDist) {
 }
 
 glm::vec3 Walls::GetColor(glm::vec3 &pos) {
-    // TODO: Calc cornell box colors. Red on left side, blue/green on right side
-    return glm::vec3(0.8f);
+    glm::vec3 color = glm::vec3(0.8f);
+
+    float epsilon = 0.0001;
+    if(pos.x < xl + epsilon) {
+        color = glm::vec3(1.0f, 0.0f, 0.0f);
+    }
+    else if(pos.x > xr - epsilon) {
+        color = glm::vec3(0.0f, 1.0f, 0.0f);
+    }
+
+    return color;
 }

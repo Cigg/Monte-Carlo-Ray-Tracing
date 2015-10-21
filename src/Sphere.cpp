@@ -43,7 +43,10 @@ bool Sphere::Intersect(const Ray &ray, float &hitDist) {
 }
 
 glm::vec3 Sphere::GetColor(glm::vec3 &pos) {
-    return glm::vec3(1.0f, 0.0f, 0.0f);
+    if(isLight)
+        return glm::vec3(1.0f);
+    else
+        return glm::vec3(1.0f, 0.0f, 0.0f);
 }
 
 glm::vec3 Sphere::GetRandomPosition() {

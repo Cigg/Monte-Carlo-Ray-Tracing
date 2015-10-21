@@ -71,13 +71,11 @@ glm::vec3 Radiance(Ray &ray) {
 			//fixa!
 			//float surfaceCos = (closestShape->GetNormal(intersectionPos)).dot(shadowRay.direction);
 			//float lightCos = ((*light)->GetNormal(intersectionPos)).dot(shadowRay.direction);
-			resultColor += (*light)->GetColor(intersectionPos)/3.0f;
+			resultColor += (*light)->GetColor(intersectionPos)*closestShape->GetColor(intersectionPos)/3.0f;
 		}
 	}
 	
-
-	// Return depth for now
-	return resultColor + glm::vec3(glm::length(intersectionPos)/3.0f);
+	return resultColor; // glm::vec3(glm::length(intersectionPos)/3.0f);
 	//return glm::vec3(glm::length(intersectionPos)/3.0f);
 }
 
