@@ -37,6 +37,9 @@ glm::vec3 Radiance(Ray &ray) {
 }
 
 int main() {
+	//----------------------------
+	//---------INIT SCENE---------
+	//----------------------------
 	Walls* walls = new Walls();
 	objects.push_back(walls);
 
@@ -48,6 +51,9 @@ int main() {
 	Image* img = new Image();
 	Camera* cam = new Camera();
 
+	//----------------------------
+	//-----------RENDER-----------
+	//----------------------------
 	for(int x = 0; x < img->GetWidth(); x++) {
 		for(int y = 0; y < img->GetHeight(); y++) {
 			Ray cameraRay = cam->GetRayDirection(x, y, img);
@@ -57,6 +63,9 @@ int main() {
 		}	
 	}
 
+	//----------------------------
+	//-----------EXPORT-----------
+	//----------------------------
 	char* outImage = (char*)"imagecool.ppm";
 	img->WritePPM(outImage);
 
