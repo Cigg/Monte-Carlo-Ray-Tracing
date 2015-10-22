@@ -146,6 +146,7 @@ int main() {
 	//----------------------------
 	//-----------RENDER-----------
 	//----------------------------
+	#pragma omp parallel for
 	for(int x = 0; x < img->GetWidth(); x++) {
 		for(int y = 0; y < img->GetHeight(); y++) {
 			glm::vec3 color = glm::vec3(0.0f);
