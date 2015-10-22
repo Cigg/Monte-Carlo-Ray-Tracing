@@ -33,3 +33,18 @@ Ray Camera::GetRayDirection(int x, int y, int p, Image* img) {
 
 	return ray;
 }
+
+Ray Camera::GetRandomRayDirection(int x, int y, Image* img) {
+	float u = (float)rand()/RAND_MAX;
+    float v = (float)rand()/RAND_MAX;
+
+	// Pixel position on the image plane
+	float xx = (2 * ((x + u) / img->GetWidth()) - 1) * angle * img->GetAspectRatio(); 
+	float yy = (1 - 2 * ((y + v) / img->GetHeight())) * angle; 
+
+	Ray ray;
+	ray.direction = glm::normalize(glm::vec3(xx, yy, -1.0f)); // Look in negative z-direction
+	ray.origin = glm::vec3(0.0f, 0.0f, 4.0f); 
+
+	return ray;
+}
