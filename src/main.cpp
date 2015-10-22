@@ -13,6 +13,67 @@ std::vector<Shape*> lights;
 
 const glm::vec3 BG_COLOR = glm::vec3(0.0f);
 
+Shape* FirstIntersection(Ray& ray);
+
+glm::vec3 Radiance(Ray &ray);
+
+int main() {
+	//----------------------------
+	//---------INIT SCENE---------
+	//----------------------------
+	Walls* walls = new Walls();
+	objects.push_back(walls);
+
+	Sphere* sphere = new Sphere(0.2f);
+	sphere->SetPosition(glm::vec3(0.0, 0.0, -0.5));
+	objects.push_back(sphere);
+
+	sphere = new Sphere(0.3f);
+	sphere->SetPosition(glm::vec3(0.8, -0.5, -0.7));
+	objects.push_back(sphere);
+
+	Sphere* light = new Sphere(0.2f);
+	light->isLight = true;
+	light->SetPosition(glm::vec3(0.0, 0.5, -0.5));
+	objects.push_back(light);
+	lights.push_back(light);
+
+	Image* img = new Image(256, 256);
+	Camera* cam = new Camera();
+
+	//----------------------------
+	//-----------RENDER-----------
+	//----------------------------
+	#pragma omp parallel for
+	for(int x = 0; x < img->GetWidth(); x++) {
+		for(int y = 0; y < img->GetHeight(); y++) {
+			glm::vec3 color = glm::vec3(0.0f);
+			// for(int p = 0; p < 4; p++) { //Anti-aliasing
+			// 		Ray cameraRay = cam->GetRayDirection(x, y, p, img);
+
+			// 		color += Radiance(cameraRay);
+			// }
+			// color = color * 0.25f;
+			int samplePerPixel = 50;
+			for(int p = 0; p < samplePerPixel; p++) {
+				Ray cameraRay = cam->GetRandomRayDirection(x, y, img);
+				color += Radiance(cameraRay);
+			}
+			color /= samplePerPixel;
+			img->SetPixel(x, y, color);
+		}	
+	}
+
+	//----------------------------
+	//-----------EXPORT-----------
+	//----------------------------
+	char* outImage = (char*)"imagecool.ppm";
+	img->WritePPM(outImage);
+
+	return EXIT_SUCCESS;
+}
+
+
 Shape* FirstIntersection(Ray& ray) {
 	float t = 10000.0f;
 	Shape* closestShape = NULL;
@@ -117,60 +178,4 @@ glm::vec3 Radiance(Ray &ray) {
 	else
 		return reflectedLight;
 	//return glm::vec3(glm::length(intersectionPos)/3.0f);
-}
-
-int main() {
-	//----------------------------
-	//---------INIT SCENE---------
-	//----------------------------
-	Walls* walls = new Walls();
-	objects.push_back(walls);
-
-	Sphere* sphere = new Sphere(0.2f);
-	sphere->SetPosition(glm::vec3(0.0, 0.0, -0.5));
-	objects.push_back(sphere);
-
-	sphere = new Sphere(0.3f);
-	sphere->SetPosition(glm::vec3(0.8, -0.5, -0.7));
-	objects.push_back(sphere);
-
-	Sphere* light = new Sphere(0.2f);
-	light->isLight = true;
-	light->SetPosition(glm::vec3(0.0, 0.5, -0.5));
-	objects.push_back(light);
-	lights.push_back(light);
-
-	Image* img = new Image(256, 256);
-	Camera* cam = new Camera();
-
-	//----------------------------
-	//-----------RENDER-----------
-	//----------------------------
-	#pragma omp parallel for
-	for(int x = 0; x < img->GetWidth(); x++) {
-		for(int y = 0; y < img->GetHeight(); y++) {
-			glm::vec3 color = glm::vec3(0.0f);
-			// for(int p = 0; p < 4; p++) { //Anti-aliasing
-			// 		Ray cameraRay = cam->GetRayDirection(x, y, p, img);
-
-			// 		color += Radiance(cameraRay);
-			// }
-			// color = color * 0.25f;
-			int samplePerPixel = 50;
-			for(int p = 0; p < samplePerPixel; p++) {
-				Ray cameraRay = cam->GetRandomRayDirection(x, y, img);
-				color += Radiance(cameraRay);
-			}
-			color /= samplePerPixel;
-			img->SetPixel(x, y, color);
-		}	
-	}
-
-	//----------------------------
-	//-----------EXPORT-----------
-	//----------------------------
-	char* outImage = (char*)"imagecool.ppm";
-	img->WritePPM(outImage);
-
-	return EXIT_SUCCESS;
 }

@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include <cstdlib>
 
 Camera::Camera() {
 	fov = 37.0f;

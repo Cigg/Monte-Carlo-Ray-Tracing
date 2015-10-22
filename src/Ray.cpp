@@ -1,4 +1,5 @@
 #include "Ray.h"
+#include <cstdlib>
 
 Ray::Ray() {
 	origin = glm::vec3(0.0f, 0.0f, 0.0f);
