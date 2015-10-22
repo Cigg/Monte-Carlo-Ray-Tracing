@@ -28,3 +28,7 @@ glm::vec3 Shape::GetRandomPosition() {
 glm::vec3 Shape::GetRandomDirection(glm::vec3 &pos) {
 	return glm::vec3(0.0f, 1.0f, 0.0f);
 }
+
+float Shape::GetArea() {
+	return 0.0f;
+}
