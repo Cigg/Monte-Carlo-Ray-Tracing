@@ -14,7 +14,6 @@ std::vector<Shape*> lights;
 const glm::vec3 BG_COLOR = glm::vec3(0.0f);
 
 Shape* FirstIntersection(Ray& ray);
-
 glm::vec3 Radiance(Ray &ray);
 
 int main() {
@@ -48,12 +47,6 @@ int main() {
 	for(int x = 0; x < img->GetWidth(); x++) {
 		for(int y = 0; y < img->GetHeight(); y++) {
 			glm::vec3 color = glm::vec3(0.0f);
-			// for(int p = 0; p < 4; p++) { //Anti-aliasing
-			// 		Ray cameraRay = cam->GetRayDirection(x, y, p, img);
-
-			// 		color += Radiance(cameraRay);
-			// }
-			// color = color * 0.25f;
 			int samplePerPixel = 50;
 			for(int p = 0; p < samplePerPixel; p++) {
 				Ray cameraRay = cam->GetRandomRayDirection(x, y, img);
