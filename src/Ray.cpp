@@ -21,8 +21,11 @@ glm::vec3 Ray::GetRandomDirection(glm::vec3 &normal) {
     glm::vec3 su = glm::normalize(glm::cross((abs(sw.x) > 0.1 ? glm::vec3(0, 1, 0) : glm::vec3(1, 0, 0)), sw));
     glm::vec3 sv = glm::cross(sw, su);
 
-    // Not done
-    return glm::vec3(1.0f);
+    glm::vec3 dir = (float)(cos(theta) * cos(phi)) * sw + 
+    				(float)(cos(theta) * sin(phi)) * su +
+    				(float)(sin(theta)) * sv;
+
+    return glm::normalize(dir);
 }
 
 // Uses the inverse of the CDF of the PDF p(theta, phi) = cos(theta)/PI
