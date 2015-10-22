@@ -11,7 +11,7 @@ Ray::~Ray() {
 		
 }
 
-glm::vec3 Ray::GetRandomDirection(glm::vec3 &normal) {
+void Ray::CalcRandomDirection(glm::vec3 &normal) {
 	float phi; // azimuth
 	float theta; // inclination
 	InverseCumulativeDistributionFunction(phi, theta);
@@ -25,7 +25,7 @@ glm::vec3 Ray::GetRandomDirection(glm::vec3 &normal) {
     				(float)(cos(theta) * sin(phi)) * su +
     				(float)(sin(theta)) * sv;
 
-    return glm::normalize(dir);
+    direction = glm::normalize(dir);
 }
 
 // Uses the inverse of the CDF of the PDF p(theta, phi) = cos(theta)/PI

@@ -32,21 +32,28 @@ int main() {
 	sh->SetPosition(glm::vec3(0.0, 0.5, -0.5));
 	scene->addLight(sh);
 
-	Image* img = new Image(512, 512);
+	Image* img = new Image(256, 256);
 	Camera* cam = new Camera();
 
 	//----------------------------
 	//-----------RENDER-----------
 	//----------------------------
+	#pragma omp parallel for
 	for(int x = 0; x < img->GetWidth(); x++) {
 		for(int y = 0; y < img->GetHeight(); y++) {
 			glm::vec3 color = glm::vec3(0.0f);
-			for(int p = 0; p < 4; p++) { //Anti-aliasing
-					Ray cameraRay = cam->GetRayDirection(x, y, p, img);
+			// for(int p = 0; p < 4; p++) { //Anti-aliasing
+			// 		Ray cameraRay = cam->GetRayDirection(x, y, p, img);
 
-					color += Radiance(cameraRay, scene);
-				}
-				color = color * 0.25f;
+			// 		color += Radiance(cameraRay);
+			// }
+			// color = color * 0.25f;
+			int samplePerPixel = 50;
+			for(int p = 0; p < samplePerPixel; p++) {
+				Ray cameraRay = cam->GetRandomRayDirection(x, y, img);
+				color += Radiance(cameraRay);
+			}
+			color /= samplePerPixel;
 			img->SetPixel(x, y, color);
 		}	
 	}

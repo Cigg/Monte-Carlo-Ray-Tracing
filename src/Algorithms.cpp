@@ -35,11 +35,14 @@ glm::vec3 Algorithms::Radiance(Ray &ray, Scene *scene) {
 		}
 	}
 
-	glm::vec3 intersectionPos = ray.origin + t*ray.direction;
-	
 	if(closestShape == NULL) {
 		return BG_COLOR;
 	}
+
+	glm::vec3 intersectionPos = ray.origin + t*ray.direction;
+	glm::vec3 intersectionNormal = closestShape->GetNormal(intersectionPos);
+	glm::vec3 surfaceColor = closestShape->GetColor(intersectionPos);
+
 	if(closestShape->isLight) {
 		return closestShape->GetColor(intersectionPos);
 	}
@@ -51,7 +54,7 @@ glm::vec3 Algorithms::Radiance(Ray &ray, Scene *scene) {
 	//for each light
 	for(std::vector<Shape*>::iterator light = lights.begin(); light != lights.end(); ++light) {
 		//add loop to cast multiple shadow rays
-		float area = (*light)->GetArea();
+		float prob = (*light)->GetSamplingProbability(intersectionPos);
 		int numShadowRays = 6;
 		for(int i = 0; i < numShadowRays; i++) {
 			Ray shadowRay = Ray();
@@ -62,7 +65,6 @@ glm::vec3 Algorithms::Radiance(Ray &ray, Scene *scene) {
 			if(FirstIntersection(shadowRay, scene) == (*light)) {
 				float surfaceCos = glm::dot(closestShape->GetNormal(intersectionPos), shadowRay.direction);
 				float lightCos = glm::dot((*light)->GetNormal(intersectionPos), -shadowRay.direction);
-				glm::vec3 surfaceColor = closestShape->GetColor(intersectionPos);
 				glm::vec3 lightColor = (*light)->GetColor(intersectionPos);
 
 				// BRDF constant for lambertian reflectors
@@ -78,17 +80,31 @@ glm::vec3 Algorithms::Radiance(Ray &ray, Scene *scene) {
 
 		// Multiply with 1/probability
 		// Probability = 1/area
-		directLight *= area/numShadowRays;
+		directLight *= prob/numShadowRays;
 	}
 
 	// TODO: reflected light
 	glm::vec3 reflectedLight = glm::vec3(0.0f);
 
+	if(ray.numBounces < 5 && ray.importance > 0.05) {
+		Ray newRay;
+		newRay.origin = intersectionPos;
+		newRay.CalcRandomDirection(intersectionNormal);
+		newRay.numBounces = ray.numBounces + 1;
+
+		float newRayCos = glm::dot(closestShape->GetNormal(intersectionPos), newRay.direction);
+		newRay.importance = ray.importance * newRayCos * 0.8f; // oldImportance * brdf
+		reflectedLight = surfaceColor*(newRay.importance/ray.importance)*Radiance(newRay, scene);
+	}
+
 	// Use russian roulette to determine if a new ray is spawned or not
 	// If new ray:
 	// Get random direction using based on the BRDF probability distribution function
-	// Calc radiance in the random direction using this function recursively
-	
-	return reflectedLight + directLight; // glm::vec3(glm::length(intersectionPos)/3.0f);
-	//return glm::vec3(glm::length(intersectionPos)/3.0f);*/
+	// Calc radiance in the random direction using this function recursively or by just followinging it until a
+	// light source is hit or if it terminates
+	if(true) // if(ray.numBounces == 0)
+		return reflectedLight + directLight; // glm::vec3(glm::length(intersectionPos)/3.0f);
+	else
+		return reflectedLight;
+	//return glm::vec3(glm::length(intersectionPos)/3.0f);
 }

@@ -92,7 +92,7 @@ glm::vec3 Sphere::GetRandomDirection(glm::vec3 &pos) {
     return glm::normalize(l);
 }
 
-float Sphere::GetArea() {
-    // Cross section area
-    return M_PI*radius*radius;
+float Sphere::GetSamplingProbability(glm::vec3 &pos) {
+    float cosTheta = sqrt(1 - radius*radius/glm::dot(pos - position, pos - position));
+    return 2*M_PI*(1 - cosTheta);
 }

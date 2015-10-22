@@ -1,6 +1,5 @@
 #ifndef CAMERA_H
 #define CAMERA_H
-#define _USE_MATH_DEFINES
 
 #include "Ray.h"
 #include "Image.h"
@@ -10,6 +9,7 @@ public:
 	Camera();
 	~Camera();
 	Ray GetRayDirection(int x, int y, int p, Image* img);
+	Ray GetRandomRayDirection(int x, int y, Image* img);
 
 protected:
 	float fov;
