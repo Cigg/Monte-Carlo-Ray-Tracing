@@ -1,12 +1,21 @@
+/**
+ * TODO: Find a more fitting class name.
+ * It is not possible to create a vec from Shape and save as,
+ * std::vector<Shape*> object = scene->shapes; Needs to be fixed.
+ */
 #include "Algorithms.h"
 
+// Background color
 const glm::vec3 BG_COLOR = glm::vec3(0.0f);
 
+/************************************************************
+ ** Calculate FirstIntersection (closest intersection)
+ ************************************************************/
 Shape* Algorithms::FirstIntersection(Ray& ray, Scene *scene) {
 	std::vector<Shape*> object = scene->shapes;
-
 	float t = 10000.0f;
 	Shape* closestShape = NULL;
+
 	for(std::vector<Shape*>::iterator obj = object.begin(); obj != object.end(); ++obj) {
 		float tmp;
 		if((*obj)->Intersect(ray, tmp)) {
@@ -20,11 +29,15 @@ Shape* Algorithms::FirstIntersection(Ray& ray, Scene *scene) {
 	return closestShape;
 }
 
+/************************************************************
+ ** Calculate Radiance
+ ************************************************************/
 glm::vec3 Algorithms::Radiance(Ray &ray, Scene *scene) {
+	// FirstIntersection (closest intersection)
 	std::vector<Shape*> objects = scene->shapes;
-
 	float t = 10000.0f;
 	Shape* closestShape = NULL;
+
 	for(std::vector<Shape*>::iterator obj = objects.begin(); obj != objects.end(); ++obj) {
 		float tmp;
 		if((*obj)->Intersect(ray, tmp)) {
@@ -35,6 +48,7 @@ glm::vec3 Algorithms::Radiance(Ray &ray, Scene *scene) {
 		}
 	}
 
+	// If no intersection, set radiance to background color
 	if(closestShape == NULL) {
 		return BG_COLOR;
 	}

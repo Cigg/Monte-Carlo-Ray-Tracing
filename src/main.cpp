@@ -51,7 +51,7 @@ int main() {
 			int samplePerPixel = 50;
 			for(int p = 0; p < samplePerPixel; p++) {
 				Ray cameraRay = cam->GetRandomRayDirection(x, y, img);
-				color += Radiance(cameraRay);
+				color += Radiance(cameraRay, scene);
 			}
 			color /= samplePerPixel;
 			img->SetPixel(x, y, color);
