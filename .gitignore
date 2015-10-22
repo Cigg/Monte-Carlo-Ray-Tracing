@@ -1,3 +1,7 @@
 # Build directories
 [Bb]in/
 [Bb]uild/
+
+# Sublime project files
+*.sublime-project
+*.sublime-workspace

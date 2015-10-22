@@ -77,7 +77,7 @@ glm::vec3 Sphere::GetRandomDirection(glm::vec3 &pos) {
 
     // Orthonormal coordinate frame
     glm::vec3 sw = glm::normalize(position - pos);
-    glm::vec3 su = glm::normalize(glm::cross((abs(sw.x) > 0.1 ? glm::vec3(0, 1, 0) : glm::vec3(1, 0, 0)), sw));
+    glm::vec3 su = glm::normalize(glm::cross((glm::abs(sw.x) > 0.1 ? glm::vec3(0, 1, 0) : glm::vec3(1, 0, 0)), sw));
     glm::vec3 sv = glm::cross(sw, su);
 
     float cosAngleMax = sqrt(1.0f - radius*radius/glm::dot(pos - position, pos - position));
