@@ -74,7 +74,9 @@ glm::vec3 Radiance(Ray &ray) {
 				glm::vec3 surfaceColor = closestShape->GetColor(intersectionPos);
 				glm::vec3 lightColor = (*light)->GetColor(intersectionPos);
 
-				resultColor += surfaceCos*lightCos*surfaceColor*lightColor;
+				// Multiply with surfaceCos = lambertian reflectance
+				// Multiply with lightCos = lambertian radiator
+				resultColor += surfaceCos*surfaceColor*lightColor;
 			}
 		}
 
@@ -106,7 +108,7 @@ int main() {
 	objects.push_back(light);
 	lights.push_back(light);
 
-	Image* img = new Image();
+	Image* img = new Image(512, 512);
 	Camera* cam = new Camera();
 
 	//----------------------------
