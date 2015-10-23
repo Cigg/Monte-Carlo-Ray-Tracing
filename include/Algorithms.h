@@ -2,19 +2,27 @@
 #define ALOGRITHMS_H
 
 #include <glm/glm.hpp>
+#include <vector>
 #include "Shape.h"
 #include "Scene.h"
 #include "Ray.h"
+#include "Camera.h"
 
 class Algorithms {
 public:
 	Algorithms();
 	~Algorithms();
 
-	Shape* FirstIntersection(Ray& ray, Scene *scene);
-	glm::vec3 Radiance(Ray &ray, Scene *scene);
+	struct Intersection {
+		Shape* shape;
+		Ray* ray;
+		glm::vec3 position;
+	};
 
-	const glm::vec3 BG_COLOR;
+	Intersection Trace(Ray &ray, Scene *scene);
+	glm::vec3 Radiance(Ray &ray, Scene *scene);
+	glm::vec3 DirectIllumination(Intersection &intersection, Scene *scene);
+	glm::vec3 IndirectIllumination(Intersection &intersection, Scene *scene);
 };
 
 #endif // ALOGRITHMS_H

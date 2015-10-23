@@ -1,7 +1,6 @@
 /**
  * TODO: Find a more fitting class name.
- * It is not possible to create a vec from Shape and save as,
- * std::vector<Shape*> object = scene->shapes; Needs to be fixed.
+ * TODO: Create a separate class for Intersection struct
  */
 #include "Algorithms.h"
 
@@ -13,41 +12,47 @@ Algorithms::~Algorithms() {
 
 }
 
-// Background color
-const glm::vec3 BG_COLOR = glm::vec3(0.0f);
+// Constants
+const glm::vec3 BG_COLOR = glm::vec3(0.0f); // Background color
+const int nShadowRays = 1; // Shadow rays
+
 
 /************************************************************
- ** Calculate FirstIntersection (closest intersection)
- ************************************************************/
-Shape* Algorithms::FirstIntersection(Ray& ray, Scene *scene) {
-	int countShape = scene->shapes->size();
-	float t = 10000.0f;
-	Shape* currentShape;
-	Shape* closestShape = NULL;
-            
-	for(int n = 0; n < countShape; ++n) {
-		float tmp;
-		currentShape = scene->shapes->at(n);
-		if(currentShape->Intersect(ray, tmp)) {
-			if(tmp < t) {
-				t = tmp;
-				closestShape = currentShape;
-			}
-		}
-	}
-
-	return closestShape;
-}
-
-/************************************************************
- ** Calculate Radiance
+ ** Radiance
  ************************************************************/
 glm::vec3 Algorithms::Radiance(Ray &ray, Scene *scene) {
-	// FirstIntersection (closest intersection)
-	int countShape = scene->shapes->size();
+	
+	Intersection intersection = Trace(ray, scene);
+	glm::vec3 radiance = glm::vec3(0.0f);
+	
+	if(intersection.shape == NULL) {
+		return BG_COLOR;
+	}
+	
+	glm::vec3 surfaceColor = intersection.shape->GetColor(intersection.position);
+	if(intersection.shape->isLight) {
+		return surfaceColor;
+	}
+	
+	radiance += DirectIllumination(intersection, scene);
+	radiance += IndirectIllumination(intersection, scene);
+
+	return radiance;
+}
+
+
+/************************************************************
+ ** Trace, (closest intersection)
+ ************************************************************/
+Algorithms::Intersection Algorithms::Trace(Ray &ray, Scene *scene) {
+	int countShape = scene->shapes->size(); // Number of shapes
 	float t = 10000.0f;
 	Shape* currentShape;
-	Shape* closestShape = NULL;
+
+	Intersection intersection;
+	intersection.shape = NULL;
+	intersection.ray = &ray;
+	intersection.position = glm::vec3(0.0f);
 
 	for(int n = 0; n < countShape; ++n) {
 		float tmp;
@@ -55,84 +60,99 @@ glm::vec3 Algorithms::Radiance(Ray &ray, Scene *scene) {
 		if(currentShape->Intersect(ray, tmp)) {
 			if(tmp < t) {
 				t = tmp;
-				closestShape = currentShape;
+				intersection.shape = currentShape;
 			}
 		}
 	}
 
-	// If no intersection, set radiance to background color
-	if(closestShape == NULL) {
-		return BG_COLOR;
-	}
+	intersection.position = ray.origin + t*ray.direction;
 
-	glm::vec3 intersectionPos = ray.origin + t*ray.direction;
-	glm::vec3 intersectionNormal = closestShape->GetNormal(intersectionPos);
-	glm::vec3 surfaceColor = closestShape->GetColor(intersectionPos);
+	return intersection;
+}
 
-	if(closestShape->isLight) {
-		return closestShape->GetColor(intersectionPos);
-	}
 
-	glm::vec3 directLight = glm::vec3(0.0f);
+/************************************************************
+ ** Direct Illumination
+ ************************************************************/
+glm::vec3 Algorithms::DirectIllumination(Intersection &intersection, Scene *scene) {
+	glm::vec3 radiance = glm::vec3(0.0f);
+	glm::vec3 surfaceColor = intersection.shape->GetColor(intersection.position);
 
-	// Shadow rays
-	int countLights = scene->lights->size();
+	int countLights = scene->lights->size(); // Number of lights
 	Shape* currentLight;
-	//for each light
+
 	for(int n = 0; n < countLights; ++n) {
-		//add loop to cast multiple shadow rays
 		currentLight = scene->lights->at(n);
-		float prob = currentLight->GetSamplingProbability(intersectionPos);
-		int numShadowRays = 6;
-		for(int i = 0; i < numShadowRays; i++) {
-			Ray shadowRay = Ray();
-			shadowRay.origin = intersectionPos;
-			shadowRay.direction = currentLight->GetRandomDirection(intersectionPos);
+		// TODO: Add loop to cast multiple shadow rays
+		float prob = currentLight->GetSamplingProbability(intersection.position);
+		Ray shadowRay;
+		shadowRay.origin = intersection.position;
+		shadowRay.direction = currentLight->GetRandomDirection(intersection.position);
 
-			//if light in sight add light to radiance
-			if(FirstIntersection(shadowRay, scene) == (currentLight)) {
-				float surfaceCos = glm::dot(closestShape->GetNormal(intersectionPos), shadowRay.direction);
-				float lightCos = glm::dot(currentLight->GetNormal(intersectionPos), -shadowRay.direction);
-				glm::vec3 lightColor = currentLight->GetColor(intersectionPos);
+		// If light in sight add light to radiance
+		Intersection possibleLight = Trace(shadowRay, scene);
+		if(possibleLight.shape == currentLight) {
+			float surfaceCos = glm::dot(intersection.shape->GetNormal(intersection.position), shadowRay.direction);
+			float lightCos = glm::dot(currentLight->GetNormal(intersection.position), -shadowRay.direction);
+			surfaceCos = surfaceCos < 0 ? 0 : surfaceCos;
+			lightCos = lightCos < 0 ? 0: lightCos;
+			
+			
+			glm::vec3 lightColor = currentLight->GetColor(intersection.position);
 
-				// BRDF constant for lambertian reflectors
-				float reflectance = 1.0f; // from 0 to 1
-				float brdf = reflectance/M_PI;
+			// BRDF constant for lambertian reflectors
+			float reflectance = 0.8f; // from 0 to 1
+			float brdf = reflectance/M_PI;
 
-				// Multiply with surfaceCos = lambertian reflectance
-				// Multiply with lightCos = lambertian radiator
-				float lightIntensity = 30.0f;
-				directLight += brdf*surfaceCos*surfaceColor*lightColor*lightIntensity;
-			}
+			// Multiply with surfaceCos = lambertian reflectance
+			// Multiply with lightCos = lambertian radiator
+			float lightIntensity = 1.0f;
+			radiance += brdf*surfaceCos*surfaceColor*lightColor*lightIntensity;
 		}
 
 		// Multiply with 1/probability
 		// Probability = 1/area
-		directLight *= prob/numShadowRays;
+		radiance *= prob/nShadowRays;
+		
 	}
+	
+	return radiance;
+}
 
-	// TODO: reflected light
-	glm::vec3 reflectedLight = glm::vec3(0.0f);
 
-	if(ray.numBounces < 5 && ray.importance > 0.05) {
+/************************************************************
+ ** Indirect Illumination
+ ************************************************************/
+glm::vec3 Algorithms::IndirectIllumination(Intersection &intersection, Scene *scene) {
+	glm::vec3 radiance = glm::vec3(0.0f);
+	
+	float absorption = 0.1f;
+	int MAX_ITERATIONS = 30;
+	
+	if(absorption < (float)rand()/RAND_MAX && intersection.ray->numBounces < MAX_ITERATIONS) {
 		Ray newRay;
-		newRay.origin = intersectionPos;
+		newRay.origin = intersection.position;
+		glm::vec3 intersectionNormal = intersection.shape->GetNormal(intersection.position);
 		newRay.CalcRandomDirection(intersectionNormal);
-		newRay.numBounces = ray.numBounces + 1;
+		float x = (float)rand()/RAND_MAX - 0.5f;
+		float y = (float)rand()/RAND_MAX - 0.5f;
+		float z = (float)rand()/RAND_MAX - 0.5f;
+		newRay.direction = glm::normalize(glm::vec3(x,y,z));
+		Intersection newIntersection = Trace(newRay, scene);
+		if(newIntersection.shape == NULL) {
+			return radiance;
+		}
 
-		float newRayCos = glm::dot(closestShape->GetNormal(intersectionPos), newRay.direction);
-		newRay.importance = ray.importance * newRayCos * 0.8f; // oldImportance * brdf
-		reflectedLight = surfaceColor*(newRay.importance/ray.importance)*Radiance(newRay, scene);
+		newRay.numBounces = intersection.ray->numBounces + 1;
+
+		glm::vec3 surfaceColor = newIntersection.shape->GetColor(newIntersection.position);
+		float newRayCos = glm::dot(intersection.shape->GetNormal(intersection.position), newRay.direction);
+		newRayCos = newRayCos < 0 ? 0: newRayCos;
+		
+		radiance = surfaceColor*Radiance(newRay, scene)/(1.0f - absorption);
+		
 	}
-
-	// Use russian roulette to determine if a new ray is spawned or not
-	// If new ray:
-	// Get random direction using based on the BRDF probability distribution function
-	// Calc radiance in the random direction using this function recursively or by just followinging it until a
-	// light source is hit or if it terminates
-	if(true) // if(ray.numBounces == 0)
-		return reflectedLight + directLight; // glm::vec3(glm::length(intersectionPos)/3.0f);
-	else
-		return reflectedLight;
-	//return glm::vec3(glm::length(intersectionPos)/3.0f);
+	
+	return radiance;
+	
 }
