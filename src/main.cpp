@@ -30,6 +30,7 @@ int main() {
 	sh = new Sphere(0.2f);
 	sh->isLight = true;
 	sh->SetPosition(glm::vec3(0.0, 0.5, -0.5));
+	scene->addObject(sh);
 	scene->addLight(sh);
 
 	Image* img = new Image(256, 256);

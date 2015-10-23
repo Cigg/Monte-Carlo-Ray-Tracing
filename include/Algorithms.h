@@ -2,7 +2,6 @@
 #define ALOGRITHMS_H
 
 #include <glm/glm.hpp>
-#include <algorithm>
 #include "Shape.h"
 #include "Scene.h"
 #include "Ray.h"
