@@ -85,7 +85,7 @@ int main() {
 	//----------------------------
 	FineArt();
 
-	#pragma omp parallel for
+	//#pragma omp parallel for
 	for(int x = 0; x < img->GetWidth(); x++) {
 		for(int y = 0; y < img->GetHeight(); y++) {
 			glm::vec3 color = glm::vec3(0.0f);
@@ -97,7 +97,7 @@ int main() {
 			color /= samplePerPixel;
 			img->SetPixel(x, y, color);
 		}
-		//LoadScreen(img->GetWidth());
+		LoadScreen(img->GetWidth());
 	}
 
 	//----------------------------
@@ -197,15 +197,17 @@ glm::vec3 DirectIllumination(Intersection &intersection) {
 glm::vec3 IndirectIllumination(Intersection &intersection) {
 	glm::vec3 radiance = glm::vec3(0.0f);
 	
-	float absorption = 0.2f;
+	float absorption = 0.1f;
 	int MAX_ITERATIONS = 30;
 	
-	if(absorption < (float)rand()/RAND_MAX) {
-		
+	if(absorption < (float)rand()/RAND_MAX && intersection.ray->numBounces < MAX_ITERATIONS) {
 		Ray newRay;
 		newRay.origin = intersection.position;
 		newRay.CalcRandomDirection(intersection.shape->GetNormal(intersection.position));
-		
+		float x = (float)rand()/RAND_MAX - 0.5f;
+		float y = (float)rand()/RAND_MAX - 0.5f;
+		float z = (float)rand()/RAND_MAX - 0.5f;
+		newRay.direction = glm::normalize(glm::vec3(x,y,z));
 		Intersection newIntersection = Trace(newRay);
 		if(newIntersection.shape == NULL) {
 			return radiance;
@@ -217,7 +219,7 @@ glm::vec3 IndirectIllumination(Intersection &intersection) {
 		float newRayCos = glm::dot(intersection.shape->GetNormal(intersection.position), newRay.direction);
 		newRayCos = newRayCos < 0 ? 0: newRayCos;
 		
-		radiance = newRayCos*surfaceColor*Radiance(newRay);
+		radiance = surfaceColor*Radiance(newRay);
 		
 	}
 	
