@@ -14,8 +14,8 @@ std::vector<Shape*> lights;
 
 const glm::vec3 BG_COLOR = glm::vec3(0.0f);
 const int nShadowRays = 1;
-const int imgWidth = 256;
-const int imgHeight = 256;
+const int imgWidth = 512;
+const int imgHeight = 512;
 const int samplePerPixel = 500;
 
 struct Intersection {
@@ -85,7 +85,7 @@ int main() {
 	//----------------------------
 	FineArt();
 
-	//#pragma omp parallel for
+	#pragma omp parallel for
 	for(int x = 0; x < img->GetWidth(); x++) {
 		for(int y = 0; y < img->GetHeight(); y++) {
 			glm::vec3 color = glm::vec3(0.0f);
@@ -219,7 +219,7 @@ glm::vec3 IndirectIllumination(Intersection &intersection) {
 		float newRayCos = glm::dot(intersection.shape->GetNormal(intersection.position), newRay.direction);
 		newRayCos = newRayCos < 0 ? 0: newRayCos;
 		
-		radiance = surfaceColor*Radiance(newRay);
+		radiance = surfaceColor*Radiance(newRay)/(1.0f - absorption);
 		
 	}
 	
