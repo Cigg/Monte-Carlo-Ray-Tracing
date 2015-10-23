@@ -37,7 +37,7 @@ Ray Camera::GetRayDirection(int x, int y, int p, Image* img) {
 
 Ray Camera::GetRandomRayDirection(int x, int y, Image* img) {
 	float u = (float)rand()/RAND_MAX;
-    float v = (float)rand()/RAND_MAX;
+  float v = (float)rand()/RAND_MAX;
 
 	// Pixel position on the image plane
 	float xx = (2 * ((x + u) / img->GetWidth()) - 1) * angle * img->GetAspectRatio(); 
