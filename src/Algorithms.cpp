@@ -3,7 +3,17 @@
  * It is not possible to create a vec from Shape and save as,
  * std::vector<Shape*> object = scene->shapes; Needs to be fixed.
  */
+#include <iostream>
+
 #include "Algorithms.h"
+
+Algorithms::Algorithms() {
+
+}
+
+Algorithms::~Algorithms() {
+
+}
 
 // Background color
 const glm::vec3 BG_COLOR = glm::vec3(0.0f);
@@ -12,16 +22,22 @@ const glm::vec3 BG_COLOR = glm::vec3(0.0f);
  ** Calculate FirstIntersection (closest intersection)
  ************************************************************/
 Shape* Algorithms::FirstIntersection(Ray& ray, Scene *scene) {
-	std::vector<Shape*> object = scene->shapes;
+	//std::vector<Shape*> object = scene->shapes;
+	int objects = scene->shapes->size();
 	float t = 10000.0f;
 	Shape* closestShape = NULL;
+            
 
-	for(std::vector<Shape*>::iterator obj = object.begin(); obj != object.end(); ++obj) {
+	//for(std::vector<Shape*>::iterator obj = object.begin(); obj != object.end(); ++obj) {
+	for(int n = 0; n < objects; ++n) {
 		float tmp;
-		if((*obj)->Intersect(ray, tmp)) {
+		Shape* obj = scene->shapes->at(n);
+		//if((*obj)->Intersect(ray, tmp)) {
+		if(obj->Intersect(ray, tmp)) {
 			if(tmp < t) {
 				t = tmp;
-				closestShape = *obj;
+				//closestShape = *obj;
+				closestShape = obj;
 			}
 		}
 	}
@@ -34,22 +50,29 @@ Shape* Algorithms::FirstIntersection(Ray& ray, Scene *scene) {
  ************************************************************/
 glm::vec3 Algorithms::Radiance(Ray &ray, Scene *scene) {
 	// FirstIntersection (closest intersection)
-	std::vector<Shape*> objects = scene->shapes;
+	//std::vector<Shape*> objects = scene->shapes;
+	int objects = scene->shapes->size();
+	//std::cout << objects << std::endl;
 	float t = 10000.0f;
 	Shape* closestShape = NULL;
 
-	for(std::vector<Shape*>::iterator obj = objects.begin(); obj != objects.end(); ++obj) {
+	//for(std::vector<Shape*>::iterator obj = objects.begin(); obj != objects.end(); ++obj) {
+	for(int n = 0; n < objects; ++n) {
 		float tmp;
-		if((*obj)->Intersect(ray, tmp)) {
+		Shape *obj = scene->shapes->at(n);
+		//if((*obj)->Intersect(ray, tmp)) {
+		if(obj->Intersect(ray, tmp)) {
 			if(tmp < t) {
 				t = tmp;
-				closestShape = *obj;
+				//closestShape = *obj;
+				closestShape = obj;
 			}
 		}
 	}
 
 	// If no intersection, set radiance to background color
 	if(closestShape == NULL) {
+		std::cout << "closesShape = NULL" << std::endl;
 		return BG_COLOR;
 	}
 
@@ -64,22 +87,32 @@ glm::vec3 Algorithms::Radiance(Ray &ray, Scene *scene) {
 	glm::vec3 directLight = glm::vec3(0.0f);
 
 	// Shadow rays
-	std::vector<Shape*> lights = scene->lights;
+	//std::vector<Shape*> lights = scene->lights;
+	int numLights = scene->lights->size();
+	//std::cout << objects << std::endl;
 	//for each light
-	for(std::vector<Shape*>::iterator light = lights.begin(); light != lights.end(); ++light) {
+	//for(std::vector<Shape*>::iterator light = lights.begin(); light != lights.end(); ++light) {
+	for(int n = 0; n < numLights; ++n) {
 		//add loop to cast multiple shadow rays
-		float prob = (*light)->GetSamplingProbability(intersectionPos);
+		Shape* light = scene->lights->at(n);
+		//float prob = (*light)->GetSamplingProbability(intersectionPos);
+		float prob = (light)->GetSamplingProbability(intersectionPos);
 		int numShadowRays = 6;
 		for(int i = 0; i < numShadowRays; i++) {
 			Ray shadowRay = Ray();
 			shadowRay.origin = intersectionPos;
-			shadowRay.direction = (*light)->GetRandomDirection(intersectionPos);
+			//shadowRay.direction = (*light)->GetRandomDirection(intersectionPos);
+			shadowRay.direction = (light)->GetRandomDirection(intersectionPos);
 
 			//if light in sight add light to radiance
-			if(FirstIntersection(shadowRay, scene) == (*light)) {
+			//if(FirstIntersection(shadowRay, scene) == (*light)) {
+			if(FirstIntersection(shadowRay, scene) == (light)) {
 				float surfaceCos = glm::dot(closestShape->GetNormal(intersectionPos), shadowRay.direction);
-				float lightCos = glm::dot((*light)->GetNormal(intersectionPos), -shadowRay.direction);
-				glm::vec3 lightColor = (*light)->GetColor(intersectionPos);
+				//float lightCos = glm::dot((*light)->GetNormal(intersectionPos), -shadowRay.direction);
+				//glm::vec3 lightColor = (*light)->GetColor(intersectionPos);
+				float lightCos = glm::dot((light)->GetNormal(intersectionPos), -shadowRay.direction);
+				glm::vec3 lightColor = (light)->GetColor(intersectionPos);
+
 
 				// BRDF constant for lambertian reflectors
 				float reflectance = 1.0f; // from 0 to 1

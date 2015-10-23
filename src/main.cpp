@@ -35,6 +35,8 @@ int main() {
 	Image* img = new Image(256, 256);
 	Camera* cam = new Camera();
 
+	Algorithms* alg = new Algorithms();
+
 	//----------------------------
 	//-----------RENDER-----------
 	//----------------------------
@@ -51,7 +53,7 @@ int main() {
 			int samplePerPixel = 50;
 			for(int p = 0; p < samplePerPixel; p++) {
 				Ray cameraRay = cam->GetRandomRayDirection(x, y, img);
-				color += Radiance(cameraRay, scene);
+				color += alg->Radiance(cameraRay, scene);
 			}
 			color /= samplePerPixel;
 			img->SetPixel(x, y, color);

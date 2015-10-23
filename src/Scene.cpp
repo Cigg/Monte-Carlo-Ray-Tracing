@@ -5,11 +5,11 @@ Scene::Scene() {
     lights = new std::vector<Shape*>();
 }
 
-void Scene::addObject(shapes *ob) {
-    shapes->push_back(ob);
+void Scene::addObject(Shape *sh) {
+    shapes->push_back(sh);
 }
 
-void Scene::addLight(lights *lg) {
+void Scene::addLight(Shape *lg) {
     lights->push_back(lg);
 }
 

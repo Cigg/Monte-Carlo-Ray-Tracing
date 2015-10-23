@@ -10,7 +10,7 @@ class Scene
 public:
     Scene();
     
-    void addObject(Shape *ob);
+    void addObject(Shape *sh);
     void addLight(Shape *lg);
     
     std::vector<Shape*> *shapes;
