@@ -1,5 +1,6 @@
 #include "Ray.h"
 #include <cstdlib>
+#include <iostream>
 
 Ray::Ray() {
 	origin = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -13,6 +14,7 @@ Ray::~Ray() {
 }
 
 void Ray::CalcRandomDirection(glm::vec3 &normal) {
+	/*
 	float phi; // azimuth
 	float theta; // inclination
 	InverseCumulativeDistributionFunction(phi, theta);
@@ -27,6 +29,27 @@ void Ray::CalcRandomDirection(glm::vec3 &normal) {
     				(float)(sin(theta)) * sv;
 
     direction = glm::normalize(dir);
+	*/
+
+	//alternative
+	//bad random generator? should use modern method?
+	float u = (float)rand()/RAND_MAX;
+	float v = (float)rand()/RAND_MAX;
+
+	//evenly distributed
+	float theta = 2*M_PI*u;
+	float cosphi = 2*v - 1;
+	float phi = acos(cosphi);
+
+	float x = cos(theta) * sin(phi);
+	float y = sin(theta) * sin(phi);
+	float z = cosphi;
+	direction = glm::vec3(x,y,z);
+	
+	if(glm::dot(normal, direction) < 0.0f) {
+		direction *= -1.0f;
+	}
+	
 }
 
 // Uses the inverse of the CDF of the PDF p(theta, phi) = cos(theta)/PI

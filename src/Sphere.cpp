@@ -65,7 +65,10 @@ glm::vec3 Sphere::GetRandomPosition() {
 	float y = radius * sin(theta) * sin(phi);
 	float z = radius * cosphi;
 
-	return position + glm::vec3(x,y,z);
+	glm::vec3 offset = glm::vec3(x,y,z);
+
+
+	return position + offset;
 }
 
 // Returns a random direction from the pos towards this shape
