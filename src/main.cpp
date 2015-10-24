@@ -52,16 +52,24 @@ int main() {
 	scene->addObject(sh);
 
 	sh = new Sphere(0.2f);
-	sh->SetPosition(glm::vec3(0.0, 0.0, -0.5));
+	sh->SetPosition(glm::vec3(0.0, -0.8, -0.5));
 	scene->addObject(sh);
 
 	sh = new Sphere(0.3f);
-	sh->SetPosition(glm::vec3(0.8, -0.5, -0.7));
+	sh->SetPosition(glm::vec3(0.7, -0.7, -0.7));
 	scene->addObject(sh);
 
 	sh = new Sphere(0.2f);
 	sh->isLight = true;
-	sh->SetPosition(glm::vec3(0.0, 0.5, -0.5));
+	sh->SetColor(glm::vec3(1.0f,0.0f,1.0f));
+	sh->SetPosition(glm::vec3(0.3, 0.95, 0));
+	scene->addObject(sh);
+	scene->addLight(sh);
+
+	sh = new Sphere(0.2f);
+	sh->isLight = true;
+	sh->SetColor(glm::vec3(0.0f,1.0f,1.0f));
+	sh->SetPosition(glm::vec3(-0.3, 0.95, 0));
 	scene->addObject(sh);
 	scene->addLight(sh);
 
@@ -87,8 +95,9 @@ int main() {
 			color /= samplePerPixel;
 			img->SetPixel(x, y, color);
 		}
-		#pragma omp critical
-		LoadScreen(img->GetWidth());
+		//#pragma omp critical
+		//LoadScreen(img->GetWidth());
+		std::cout << x << std::endl;
 	}
 
 	//----------------------------
