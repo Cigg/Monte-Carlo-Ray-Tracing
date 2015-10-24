@@ -87,6 +87,7 @@ int main() {
 			color /= samplePerPixel;
 			img->SetPixel(x, y, color);
 		}
+		#pragma omp critical
 		LoadScreen(img->GetWidth());
 	}
 
