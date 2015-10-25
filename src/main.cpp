@@ -10,9 +10,9 @@
 #include "Walls.h"
 #include "Algorithms.h"
 
-const int imgWidth = 256;
-const int imgHeight = 256;
-const int samplePerPixel = 1000;
+const int imgWidth = 512;
+const int imgHeight = 512;
+const int samplePerPixel = 2000;
 
 void FineArt() {
 	std::cout << "\n\n\n\n\n\n";
@@ -51,24 +51,24 @@ int main() {
 	sh = new Walls();
 	scene->addObject(sh);
 
-	sh = new Sphere(0.2f);
-	sh->SetPosition(glm::vec3(0.0, -0.8, -0.5));
+	sh = new Sphere(0.3f);
+	sh->SetPosition(glm::vec3(0.5, -0.7, 0));
 	scene->addObject(sh);
 
 	sh = new Sphere(0.3f);
-	sh->SetPosition(glm::vec3(0.7, -0.7, -0.7));
+	sh->SetPosition(glm::vec3(-0.5, -0.7, 0));
 	scene->addObject(sh);
 
 	sh = new Sphere(0.2f);
 	sh->isLight = true;
-	sh->SetColor(glm::vec3(1.0f,1.0f,1.0f));
+	sh->SetColor(glm::vec3(1.0f,0.0f,1.0f));
 	sh->SetPosition(glm::vec3(0.3, 0.95, 0));
 	scene->addObject(sh);
 	scene->addLight(sh);
 
 	sh = new Sphere(0.2f);
 	sh->isLight = true;
-	sh->SetColor(glm::vec3(1.0f,1.0f,1.0f));
+	sh->SetColor(glm::vec3(0.0f,1.0f,1.0f));
 	sh->SetPosition(glm::vec3(-0.3, 0.95, 0));
 	scene->addObject(sh);
 	scene->addLight(sh);

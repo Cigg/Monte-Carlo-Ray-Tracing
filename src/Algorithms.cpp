@@ -99,10 +99,9 @@ glm::vec3 Algorithms::DirectIllumination(Intersection &intersection, Scene *scen
 			
 			glm::vec3 lightColor = currentLight->GetColor(intersection.position);
 
-			float lightIntensity = 10.0f;
+			float lightIntensity = 50.0f;
 			glm::vec3 r = intersection.position - possibleLight.position;
-			float distanceFalloff = 1.0f/(glm::dot(r,r) + 1.0f);
-			float radianceTransfer = surfaceCos*lightCos*distanceFalloff; //add distance?
+			float radianceTransfer = surfaceCos*lightCos;
 			float brdf = 0.8f/M_PI;
 			radiance += (brdf*radianceTransfer*lightColor*lightIntensity) / (lightSourcePdf * lightPointPdf);
 		}
