@@ -10,9 +10,9 @@
 #include "Walls.h"
 #include "Algorithms.h"
 
-const int imgWidth = 256;
-const int imgHeight = 256;
-const int samplePerPixel = 2000;
+const int imgWidth = 512;
+const int imgHeight = 512;
+const int samplePerPixel = 5000;
 
 void FineArt() {
 	std::cout << "\n\n\n\n\n\n";
@@ -51,13 +51,18 @@ int main() {
 	sh = new Walls();
 	scene->addObject(sh);
 
-	sh = new Sphere(0.3f);
-	sh->SetPosition(glm::vec3(0.5, -0.7, 0));
+	sh = new Sphere(0.2f);
+	sh->SetPosition(glm::vec3(0.5, -0.8, 0.5));
+	scene->addObject(sh);
+
+	sh = new Sphere(0.2f);
+	sh->SetPosition(glm::vec3(-0.5, -0.8, 0.5));
+	sh->roughness = 1.0f;
 	scene->addObject(sh);
 
 	sh = new Sphere(0.3f);
-	sh->SetPosition(glm::vec3(-0.5, -0.7, 0));
-	sh->roughness = 1.0f;
+	sh->isTrans = true;
+	sh->SetPosition(glm::vec3(0, -0.7, -0.5));
 	scene->addObject(sh);
 
 	sh = new Sphere(0.2f);

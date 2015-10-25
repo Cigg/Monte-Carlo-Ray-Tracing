@@ -20,7 +20,8 @@ public:
 	virtual float GetSamplingProbability(glm::vec3 &pos);
 
 	bool isLight;
-	Shape() { isLight = false; reflectance = 0.9f; roughness = 0.0f;}
+	bool isTrans;
+	Shape() { isLight = false; isTrans = false; reflectance = 0.9f; roughness = 0.0f;}
 
 	float reflectance;
 	float roughness;

@@ -76,7 +76,7 @@ bool Walls::Intersect(const Ray &ray, float &hitDist) {
     if(zmax < max) {
     	max = zmax;
     }
-
+	
     hitDist = max;
 
     return true;
@@ -91,6 +91,8 @@ glm::vec3 Walls::GetColor(glm::vec3 &pos) {
     }
     else if(pos.x > xr - epsilon) {
         color = glm::vec3(0.0f, 1.0f, 0.0f);
+    } else if(pos.z > zr - epsilon) {
+        color = glm::vec3(0.0f, 0.0f, 0.0f);
     }
 
     return color;

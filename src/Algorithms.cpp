@@ -35,6 +35,36 @@ glm::vec3 Algorithms::Radiance(Ray &ray, Scene *scene) {
 	if(intersection.shape->isLight) {
 		return surfaceColor;
 	}
+
+	if(intersection.shape->isTrans) {
+		//reflection
+		glm::vec3 d = ray.direction;
+		glm::vec3 n = intersection.shape->GetNormal(intersection.position);
+		Ray reflectionRay;
+		reflectionRay.origin = intersection.position;
+		float cosIn = glm::dot(d,n);
+		reflectionRay.direction = d - 2.0f*cosIn*n;
+
+		glm::vec3 reflectionRadiance = Radiance(reflectionRay, scene);
+		
+		//refraction
+		Ray refractionRay;
+		refractionRay.origin = intersection.position;
+		refractionRay.direction = ray.direction;
+		float snellRatio = 1.0f; // airdensity/glassdensity
+		refractionRay.CalcRefractionDirection(snellRatio, n);
+		
+		//hardcoded for spheres at the moment
+		glm::vec3 l = intersection.shape->GetPosition() - refractionRay.origin;
+		float tmiddle = glm::dot(l, ray.direction);
+		glm::vec3 refractionOutPosition = refractionRay.origin + 2.0f*tmiddle*refractionRay.direction;
+		
+		refractionRay.origin = refractionOutPosition;
+		refractionRay.CalcRefractionDirection(1.0f/snellRatio, -intersection.shape->GetNormal(refractionOutPosition));
+		glm::vec3 refractionRadiance = Radiance(refractionRay, scene);
+		
+		return 0.5f*reflectionRadiance + 0.5f*refractionRadiance;
+	}
 	
 	radiance += DirectIllumination(intersection, scene);
 	radiance += IndirectIllumination(intersection, scene);
