@@ -99,10 +99,10 @@ glm::vec3 Algorithms::DirectIllumination(Intersection &intersection, Scene *scen
 			
 			glm::vec3 lightColor = currentLight->GetColor(intersection.position);
 
-			float lightIntensity = 50.0f;
+			float lightIntensity = 20.0f;
 			glm::vec3 r = intersection.position - possibleLight.position;
 			float radianceTransfer = surfaceCos*lightCos;
-			float brdf = 0.8f/M_PI;
+			float brdf = intersection.shape->BRDF(intersection.ray->direction,shadowRay.direction,intersection.position);
 			radiance += (brdf*radianceTransfer*lightColor*lightIntensity) / (lightSourcePdf * lightPointPdf);
 		}
 
@@ -139,7 +139,7 @@ glm::vec3 Algorithms::IndirectIllumination(Intersection &intersection, Scene *sc
 		glm::vec3 surfaceColor = newIntersection.shape->GetColor(newIntersection.position);
 		float newRayCos = std::max(0.0f, glm::dot(intersection.shape->GetNormal(intersection.position), newRay.direction));
 		float pdf = 1.0f/(2.0f*M_PI); //correct probability distribution for hemisphere?
-		float brdf = 0.8f/M_PI;
+		float brdf = intersection.shape->BRDF(intersection.ray->direction,newRay.direction,intersection.position);
 		radiance = brdf*newRayCos*Radiance(newRay, scene)/((1.0f - absorption)*pdf);
 		
 	}

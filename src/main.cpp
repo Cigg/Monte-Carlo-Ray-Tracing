@@ -10,8 +10,8 @@
 #include "Walls.h"
 #include "Algorithms.h"
 
-const int imgWidth = 512;
-const int imgHeight = 512;
+const int imgWidth = 256;
+const int imgHeight = 256;
 const int samplePerPixel = 2000;
 
 void FineArt() {
@@ -57,6 +57,7 @@ int main() {
 
 	sh = new Sphere(0.3f);
 	sh->SetPosition(glm::vec3(-0.5, -0.7, 0));
+	sh->roughness = 1.0f;
 	scene->addObject(sh);
 
 	sh = new Sphere(0.2f);
