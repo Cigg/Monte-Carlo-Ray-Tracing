@@ -55,7 +55,7 @@ void Ray::CalcRandomDirection(glm::vec3 &normal) {
 void Ray::CalcRefractionDirection(float ratio, glm::vec3 &normal) {
 	float cosTheta = glm::dot(direction,normal);
 	float sinTheta2 = ratio*ratio*(1.0f - cosTheta*cosTheta);
-	direction = glm::normalize(ratio*direction + (ratio*cosTheta - sqrt(1 - sinTheta2))*normal);
+	direction = glm::normalize(ratio*direction + (float)(ratio*cosTheta - sqrt(1 - sinTheta2))*normal);
 }
 
 // Uses the inverse of the CDF of the PDF p(theta, phi) = cos(theta)/PI

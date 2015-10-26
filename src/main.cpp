@@ -12,7 +12,7 @@
 
 const int imgWidth = 512;
 const int imgHeight = 512;
-const int samplePerPixel = 5000;
+const int samplePerPixel = 50;
 
 void FineArt() {
 	std::cout << "\n\n\n\n\n\n";
