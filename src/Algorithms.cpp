@@ -129,7 +129,7 @@ glm::vec3 Algorithms::DirectIllumination(Intersection &intersection, Scene *scen
 			
 			glm::vec3 lightColor = currentLight->GetColor(intersection.position);
 
-			float lightIntensity = 100.0f;
+			float lightIntensity = 50.0f;
 			float radianceTransfer = surfaceCos*lightCos;
 			float brdf = intersection.shape->OrenNayarBRDF(intersection.ray->direction,shadowRay.direction,intersection.position);
 			radiance += (brdf*radianceTransfer*lightColor*lightIntensity) / (lightSourcePdf);
@@ -165,14 +165,16 @@ glm::vec3 Algorithms::IndirectIllumination(Intersection &intersection, Scene *sc
 		}
 
 		glm::vec3 surfaceColor = newIntersection.shape->GetColor(newIntersection.position);
-		float newRayCos = std::max(0.0f, glm::dot(intersection.shape->GetNormal(intersection.position), newRay.direction));
-		float pdf = 1.0f/(2.0f*M_PI); //correct probability distribution for hemisphere?
-		float brdf = intersection.shape->OrenNayarBRDF(intersection.ray->direction,newRay.direction,intersection.position);
+		//float newRayCos = std::max(0.0f, glm::dot(intersection.shape->GetNormal(intersection.position), newRay.direction));
+		//float pdf = 1.0f/(2.0f*M_PI); //correct probability distribution for hemisphere?
+		float brdf = intersection.shape->LambertianBRDF();
+		//float brdf = intersection.shape->OrenNayarBRDF(intersection.ray->direction,newRay.direction,intersection.position);
 
 		newRay.numBounces = intersection.ray->numBounces + 1;
-		newRay.importance = intersection.ray->importance * brdf * newRayCos;
+		newRay.importance = M_PI * brdf * intersection.ray->importance;
 
-		radiance = (newRay.importance / intersection.ray->importance)*Radiance(newRay, scene)/((1.0f - absorption)*pdf);
+		radiance = (newRay.importance / intersection.ray->importance)*Radiance(newRay, scene)/((1.0f - absorption));
+		//radiance = Radiance(newRay, scene)/((1.0f - absorption));
 		
 	}
 	

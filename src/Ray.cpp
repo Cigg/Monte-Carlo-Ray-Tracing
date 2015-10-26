@@ -14,41 +14,42 @@ Ray::~Ray() {
 }
 
 void Ray::CalcRandomDirection(glm::vec3 &normal) {
-	/*
-	float phi; // azimuth
-	float theta; // inclination
-	InverseCumulativeDistributionFunction(phi, theta);
+	float u = (float)rand()/RAND_MAX;
+    float v = (float)rand()/RAND_MAX;
+
+    float x = cos(2*M_PI*u)*sqrt(1 - v);
+    float y = sin(2*M_PI*u)*sqrt(1 - v);
+    float z = sqrt(v);
+
+    glm::vec3 direction = glm::normalize(glm::vec3(x, y, z));
 
     // Orthonormal coordinate frame
     glm::vec3 sw = normal;
     glm::vec3 su = glm::normalize(glm::cross((glm::abs(sw.x) > 0.1 ? glm::vec3(0, 1, 0) : glm::vec3(1, 0, 0)), sw));
     glm::vec3 sv = glm::cross(sw, su);
 
-    glm::vec3 dir = (float)(cos(theta) * cos(phi)) * sw + 
-    				(float)(cos(theta) * sin(phi)) * su +
-    				(float)(sin(theta)) * sv;
+    glm::mat3 rot = glm::mat3(sv, sw, su);
 
-    direction = glm::normalize(dir);
-	*/
+    direction = direction*rot;
 
-	//alternative
-	//bad random generator? should use modern method?
-	float u = (float)rand()/RAND_MAX;
-	float v = (float)rand()/RAND_MAX;
+	// //alternative
+	// //bad random generator? should use modern method?
+	// float u = (float)rand()/RAND_MAX;
+	// float v = (float)rand()/RAND_MAX;
 
-	//evenly distributed
-	float theta = 2*M_PI*u;
-	float cosphi = 2*v - 1;
-	float phi = acos(cosphi);
+	// //evenly distributed
+	// float theta = 2*M_PI*u;
+	// float cosphi = 2*v - 1;
+	// float phi = acos(cosphi);
 
-	float x = cos(theta) * sin(phi);
-	float y = sin(theta) * sin(phi);
-	float z = cosphi;
-	direction = glm::vec3(x,y,z);
+	// float x = cos(theta) * sin(phi);
+	// float y = sin(theta) * sin(phi);
+	// float z = cosphi;
+	// direction = glm::vec3(x,y,z);
 	
-	if(glm::dot(normal, direction) < 0.0f) {
-		direction *= -1.0f;
-	}
+	// if(glm::dot(normal, direction) < 0.0f) {
+	// 	direction *= -1.0f;
+	// }
 	
 }
 
