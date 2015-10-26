@@ -58,7 +58,7 @@ void Ray::CalcRefractionDirection(float ratio, glm::vec3 &normal) {
 	float r = ratio;
 	glm::vec3 l = direction;
 	glm::vec3 n = normal;
-	direction = r*l + (r*c - sqrt(1.0f - r*r*(1.0f - c*c)))*n;
+	direction = r*l + (float)(r*c - sqrt(1.0f - r*r*(1.0f - c*c)))*n;
 }
 
 // Uses the inverse of the CDF of the PDF p(theta, phi) = cos(theta)/PI
