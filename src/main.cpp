@@ -62,7 +62,7 @@ int main() {
 
 	sh = new Sphere(0.3f);
 	sh->isTrans = true;
-	sh->SetPosition(glm::vec3(0, -0.7, -0.5));
+	sh->SetPosition(glm::vec3(0.5, -0.7, -0.5));
 	scene->addObject(sh);
 
 	sh = new Sphere(0.2f);
