@@ -15,8 +15,9 @@ public:
 	virtual void SetColor(glm::vec3 col);
 	virtual glm::vec3 GetNormal(glm::vec3 &intersection);
 	virtual glm::vec3 GetRandomPosition();
-	virtual glm::vec3 GetRandomDirection(glm::vec3 &pos);
-	virtual float BRDF(glm::vec3 &in, glm::vec3 &re, glm::vec3 &pos);
+	virtual glm::vec3 GetRandomDirectionTowardsShape(glm::vec3 &pos);
+	virtual float OrenNayarBRDF(glm::vec3 &in, glm::vec3 &re, glm::vec3 &pos);
+	virtual float LambertianBRDF();
 	virtual float GetSamplingProbability(glm::vec3 &pos);
 
 	bool isLight;

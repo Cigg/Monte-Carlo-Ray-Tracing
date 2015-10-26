@@ -52,12 +52,13 @@ void Ray::CalcRandomDirection(glm::vec3 &normal) {
 	
 }
 
+//https://en.wikipedia.org/wiki/Snell%27s_law#Vector_form
 void Ray::CalcRefractionDirection(float ratio, glm::vec3 &normal) {
-	float cosTheta = glm::dot(direction,normal);
-	float sinTheta2 = ratio*ratio*(1.0f - cosTheta*cosTheta);
-	float n = ratio*cosTheta - sqrt(1 - sinTheta2);
-	glm::vec3 nNormal = n*normal;
-	direction = glm::normalize(ratio*direction + nNormal);
+	float c = glm::dot(-normal,direction);
+	float r = ratio;
+	glm::vec3 l = direction;
+	glm::vec3 n = normal;
+	direction = r*l + (float)(r*c - sqrt(1.0f - r*r*(1.0f - c*c)))*n;
 }
 
 // Uses the inverse of the CDF of the PDF p(theta, phi) = cos(theta)/PI

@@ -4,6 +4,7 @@
  */
 #include "Algorithms.h"
 
+#include <algorithm> // std::max, std::min
 #include <iostream>
 
 Algorithms::Algorithms() {
@@ -22,7 +23,7 @@ const int nShadowRays = 2; // Shadow rays
 /************************************************************
  ** Radiance
  ************************************************************/
-glm::vec3 Algorithms::Radiance(Ray &ray, Scene *scene) {
+glm::vec3 Algorithms::Radiance(Ray &ray, Scene* scene) {
 	
 	Intersection intersection = Trace(ray, scene);
 	glm::vec3 radiance = glm::vec3(0.0f);
@@ -51,7 +52,7 @@ glm::vec3 Algorithms::Radiance(Ray &ray, Scene *scene) {
 		Ray refractionRay;
 		refractionRay.origin = intersection.position;
 		refractionRay.direction = ray.direction;
-		float snellRatio = 1.0f; // airdensity/glassdensity
+		float snellRatio = 0.5f; // airdensity/glassdensity
 		refractionRay.CalcRefractionDirection(snellRatio, n);
 		
 		//hardcoded for spheres at the moment
@@ -61,10 +62,10 @@ glm::vec3 Algorithms::Radiance(Ray &ray, Scene *scene) {
 		
 		refractionRay.origin = refractionOutPosition;
 		glm::vec3 refractionNormal = -intersection.shape->GetNormal(refractionOutPosition);
-		refractionRay.CalcRefractionDirection(1.0f/snellRatio, refractionNormal);
+		refractionRay.CalcRefractionDirection(snellRatio, refractionNormal);
 		glm::vec3 refractionRadiance = Radiance(refractionRay, scene);
 		
-		return 0.5f*reflectionRadiance + 0.5f*refractionRadiance;
+		return 0.2f*reflectionRadiance + 0.8f*refractionRadiance;
 	}
 	
 	radiance += DirectIllumination(intersection, scene);
@@ -109,19 +110,17 @@ Algorithms::Intersection Algorithms::Trace(Ray &ray, Scene *scene) {
  ************************************************************/
 glm::vec3 Algorithms::DirectIllumination(Intersection &intersection, Scene *scene) {
 	glm::vec3 radiance = glm::vec3(0.0f);
-	glm::vec3 surfaceColor = intersection.shape->GetColor(intersection.position);
-
 	
 	for(int i = 0; i < nShadowRays; i++) {
 		//select light source k based of lightsource pdf, should probably be a property of lightsource and depend on distance and size
 		int lightIndex = rand()%scene->lights->size(); //currently just select one random lightsource
 		Shape* currentLight = scene->lights->at(lightIndex);
 		float lightSourcePdf = 1.0f/scene->lights->size();
-		float lightPointPdf = 1.0f/currentLight->GetSamplingProbability(intersection.position);
+		float lightPointPdf = currentLight->GetSamplingProbability(intersection.position);
 		//generate shadowray to point y on light source k
 		Ray shadowRay;
 		shadowRay.origin = intersection.position;
-		shadowRay.direction = currentLight->GetRandomDirection(intersection.position);
+		shadowRay.direction = currentLight->GetRandomDirectionTowardsShape(intersection.position);
 		//estimate radiance
 		Intersection possibleLight = Trace(shadowRay, scene);
 		if(possibleLight.shape == currentLight) {
@@ -130,14 +129,13 @@ glm::vec3 Algorithms::DirectIllumination(Intersection &intersection, Scene *scen
 			
 			glm::vec3 lightColor = currentLight->GetColor(intersection.position);
 
-			float lightIntensity = 20.0f;
-			glm::vec3 r = intersection.position - possibleLight.position;
+			float lightIntensity = 100.0f;
 			float radianceTransfer = surfaceCos*lightCos;
-			float brdf = intersection.shape->BRDF(intersection.ray->direction,shadowRay.direction,intersection.position);
-			radiance += (brdf*radianceTransfer*lightColor*lightIntensity) / (lightSourcePdf * lightPointPdf);
+			float brdf = intersection.shape->OrenNayarBRDF(intersection.ray->direction,shadowRay.direction,intersection.position);
+			radiance += (brdf*radianceTransfer*lightColor*lightIntensity) / (lightSourcePdf);
 		}
 
-		radiance /= nShadowRays;
+		radiance *= lightPointPdf / nShadowRays;
 	}
 
 	return radiance;
@@ -151,10 +149,11 @@ glm::vec3 Algorithms::IndirectIllumination(Intersection &intersection, Scene *sc
 	glm::vec3 radiance = glm::vec3(0.0f);
 	
 	float absorption = 0.5f;
-	int MAX_ITERATIONS = 3;
+	int MAX_ITERATIONS = 5;
 	
 	//add importance for optimization
-	if(absorption < (float)rand()/RAND_MAX && intersection.ray->numBounces < MAX_ITERATIONS) {
+	
+	if(absorption < (float)rand()/RAND_MAX && intersection.ray->numBounces < MAX_ITERATIONS && intersection.ray->importance > 0.05) {
 		Ray newRay;
 		newRay.origin = intersection.position;
 		glm::vec3 intersectionNormal = intersection.shape->GetNormal(intersection.position);
@@ -165,13 +164,15 @@ glm::vec3 Algorithms::IndirectIllumination(Intersection &intersection, Scene *sc
 			return radiance;
 		}
 
-		newRay.numBounces = intersection.ray->numBounces + 1;
-
 		glm::vec3 surfaceColor = newIntersection.shape->GetColor(newIntersection.position);
 		float newRayCos = std::max(0.0f, glm::dot(intersection.shape->GetNormal(intersection.position), newRay.direction));
 		float pdf = 1.0f/(2.0f*M_PI); //correct probability distribution for hemisphere?
-		float brdf = intersection.shape->BRDF(intersection.ray->direction,newRay.direction,intersection.position);
-		radiance = brdf*newRayCos*Radiance(newRay, scene)/((1.0f - absorption)*pdf);
+		float brdf = intersection.shape->OrenNayarBRDF(intersection.ray->direction,newRay.direction,intersection.position);
+
+		newRay.numBounces = intersection.ray->numBounces + 1;
+		newRay.importance = intersection.ray->importance * brdf * newRayCos;
+
+		radiance = (newRay.importance / intersection.ray->importance)*Radiance(newRay, scene)/((1.0f - absorption)*pdf);
 		
 	}
 	

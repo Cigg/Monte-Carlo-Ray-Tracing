@@ -13,7 +13,7 @@ public:
 	glm::vec3 GetColor(glm::vec3 &pos);
 	glm::vec3 GetNormal(glm::vec3 &intersection);
 	glm::vec3 GetRandomPosition();
-	glm::vec3 GetRandomDirection(glm::vec3 &pos);
+	glm::vec3 GetRandomDirectionTowardsShape(glm::vec3 &pos);
 	float GetSamplingProbability(glm::vec3 &pos);
 
 protected:

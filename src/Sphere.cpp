@@ -71,7 +71,7 @@ glm::vec3 Sphere::GetRandomPosition() {
 }
 
 // Returns a random direction from the pos towards this shape
-glm::vec3 Sphere::GetRandomDirection(glm::vec3 &pos) {
+glm::vec3 Sphere::GetRandomDirectionTowardsShape(glm::vec3 &pos) {
     float u = (float)rand()/RAND_MAX;
     float v = (float)rand()/RAND_MAX;
 
