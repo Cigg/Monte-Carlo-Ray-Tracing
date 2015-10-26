@@ -61,8 +61,8 @@ glm::vec3 Algorithms::Radiance(Ray &ray, Scene* scene) {
 		glm::vec3 refractionOutPosition = refractionRay.origin + 2.0f*tmiddle*refractionRay.direction;
 		
 		refractionRay.origin = refractionOutPosition;
-		glm::vec3 normal = -intersection.shape->GetNormal(refractionOutPosition);
-		refractionRay.CalcRefractionDirection(1.0f/snellRatio, normal);
+		glm::vec3 refractionNormal = -intersection.shape->GetNormal(refractionOutPosition);
+		refractionRay.CalcRefractionDirection(1.0f/snellRatio, refractionNormal);
 		glm::vec3 refractionRadiance = Radiance(refractionRay, scene);
 		
 		return 0.0f*reflectionRadiance + 1.0f*refractionRadiance;
