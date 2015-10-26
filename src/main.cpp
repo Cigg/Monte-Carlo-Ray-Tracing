@@ -10,9 +10,9 @@
 #include "Walls.h"
 #include "Algorithms.h"
 
-const int imgWidth = 512;
-const int imgHeight = 512;
-const int samplePerPixel = 50;
+const int imgWidth = 200;
+const int imgHeight = 200;
+const int samplePerPixel = 300;
 
 void FineArt() {
 	std::cout << "\n\n\n\n\n\n";
@@ -101,9 +101,9 @@ int main() {
 			color /= samplePerPixel;
 			img->SetPixel(x, y, color);
 		}
-		//#pragma omp critical
-		//LoadScreen(img->GetWidth());
-		std::cout << x << std::endl;
+		#pragma omp critical
+		LoadScreen(img->GetWidth());
+		//std::cout << x << std::endl;
 	}
 
 	//----------------------------
