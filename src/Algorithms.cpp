@@ -52,7 +52,7 @@ glm::vec3 Algorithms::Radiance(Ray &ray, Scene* scene) {
 		Ray refractionRay;
 		refractionRay.origin = intersection.position;
 		refractionRay.direction = ray.direction;
-		float snellRatio = 1.0f; // airdensity/glassdensity
+		float snellRatio = 0.5f; // airdensity/glassdensity
 		refractionRay.CalcRefractionDirection(snellRatio, n);
 		
 		//hardcoded for spheres at the moment
@@ -62,10 +62,10 @@ glm::vec3 Algorithms::Radiance(Ray &ray, Scene* scene) {
 		
 		refractionRay.origin = refractionOutPosition;
 		glm::vec3 refractionNormal = -intersection.shape->GetNormal(refractionOutPosition);
-		refractionRay.CalcRefractionDirection(1.0f/snellRatio, refractionNormal);
+		refractionRay.CalcRefractionDirection(snellRatio, refractionNormal);
 		glm::vec3 refractionRadiance = Radiance(refractionRay, scene);
 		
-		return 0.0f*reflectionRadiance + 1.0f*refractionRadiance;
+		return 0.2f*reflectionRadiance + 0.8f*refractionRadiance;
 	}
 	
 	radiance += DirectIllumination(intersection, scene);
