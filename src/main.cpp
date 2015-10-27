@@ -53,31 +53,34 @@ int main() {
 	sh = new Walls();
 	scene->addObject(sh);
 
-	sh = new Sphere(0.2f);
-	sh->SetPosition(glm::vec3(0.5, -0.8, 0.5));
+	sh = new Sphere(0.3f);
+	sh->SetPosition(glm::vec3(0.5f, -0.1f, -0.5f));
+	sh->SetColor(glm::vec3(0.3f, 1.0f, 0.3f));
+	sh->roughness = 0.0f;
 	scene->addObject(sh);
 
-	sh = new Sphere(0.2f);
-	sh->SetPosition(glm::vec3(-0.5, -0.8, 0.5));
+	sh = new Sphere(0.3f);
+	sh->SetPosition(glm::vec3(-0.5f, -0.1f, -0.5f));
+	sh->SetColor(glm::vec3(0.3f, 1.0f, 0.3f));
 	sh->roughness = 1.0f;
 	scene->addObject(sh);
 
 	sh = new Sphere(0.3f);
 	sh->isTrans = true;
-	sh->SetPosition(glm::vec3(0.5, -0.7, -0.5));
+	sh->SetPosition(glm::vec3(0.0f, -0.2f, 0.3f));
 	scene->addObject(sh);
 
-	sh = new Sphere(0.2f);
-	sh->isLight = true;
-	sh->SetColor(glm::vec3(1.0f, 0.0f, 1.0f));
-	sh->SetPosition(glm::vec3(0.3, 0.95, 0));
-	scene->addObject(sh);
-	scene->addLight(sh);
+	//sh = new Sphere(0.2f);
+	//sh->isLight = true;
+	//sh->SetColor(glm::vec3(1.0f, 0.0f, 1.0f));
+	//sh->SetPosition(glm::vec3(0.3, 0.95, 0));
+	//scene->addObject(sh);
+	//scene->addLight(sh);
 
-	sh = new Sphere(0.2f);
+	sh = new Sphere(0.3f);
 	sh->isLight = true;
-	sh->SetColor(glm::vec3(0.0f, 1.0f, 1.0f));
-	sh->SetPosition(glm::vec3(-0.3, 0.95, 0));
+	sh->SetColor(glm::vec3(1.0f, 1.0f, 1.0f));
+	sh->SetPosition(glm::vec3(0, 1, 0));
 	scene->addObject(sh);
 	scene->addLight(sh);
 

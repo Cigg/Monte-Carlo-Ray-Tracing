@@ -34,11 +34,11 @@ glm::vec3 Shape::GetRandomPosition() {
 //Suggestion: Use uniform brdf as standard and move this to oren-nayar subclass or new Material class for speed
 float Shape::OrenNayarBRDF(glm::vec3 &in, glm::vec3 &re, glm::vec3 &pos) {
 	glm::vec3 normal = GetNormal(pos);
-	float cosThetaIn = std::max(0.0f, glm::dot(-in, normal));
-	float cosThetaRe = std::max(0.0f, glm::dot(re, normal));
-	float cosThetaIn2 = std::min(1.0f, cosThetaIn*cosThetaIn);
-	float cosThetaRe2 = std::min(1.0f, cosThetaRe*cosThetaRe);
-	float sinInOutTheta = sqrt((1.0f - cosThetaIn2)*(1.0f - cosThetaRe2));
+	float cosThetaIn = std::min(1.0f, std::max(0.0001f, glm::dot(-in, normal)));
+	float cosThetaRe = std::min(1.0f, std::max(0.0001f, glm::dot(re, normal)));
+	float cosThetaIn2 = cosThetaIn*cosThetaIn;
+	float cosThetaRe2 = cosThetaRe*cosThetaRe;
+	float sinThetaTanTheta = sqrt((1.0f - cosThetaIn2)*(1.0f - cosThetaRe2)) / std::max(cosThetaIn, cosThetaRe);
 	glm::vec3 inPlane = glm::normalize(-in - cosThetaIn*normal);
 	glm::vec3 rePlane = glm::normalize(re - cosThetaRe*normal);
 	float cosPhi = glm::dot(inPlane, rePlane);
@@ -47,7 +47,9 @@ float Shape::OrenNayarBRDF(glm::vec3 &in, glm::vec3 &re, glm::vec3 &pos) {
 	float A = 1.0f - 0.5f*roughness2/(roughness2 + 0.57f);
 	float B = 0.45f*roughness2/(roughness2 + 0.09f);
 
-	return (reflectance / M_PI) * (A + (B * std::max(0.0f, cosPhi) * sinInOutTheta));
+	float brdf = (reflectance / M_PI) * (A + (B * std::max(0.0f, cosPhi) * sinThetaTanTheta));
+
+	return brdf;
 }
 
 float Shape::LambertianBRDF() {

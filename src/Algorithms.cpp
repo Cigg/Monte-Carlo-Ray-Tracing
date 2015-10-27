@@ -18,6 +18,7 @@ Algorithms::~Algorithms() {
 // Constants
 const glm::vec3 BG_COLOR = glm::vec3(0.0f); // Background color
 const int nShadowRays = 2; // Shadow rays
+const float lightIntensity = 25.0f;
 
 
 /************************************************************
@@ -36,10 +37,6 @@ glm::vec3 Algorithms::Radiance(Ray &ray, Scene* scene) {
 	if(intersection.shape->isLight) {
 		return surfaceColor;
 	}
-
-	//return intersection.shape->GetNormal(intersection.position);
-	if (intersection.shape->GetNormal(intersection.position) == glm::vec3(0, 0, -1))
-		return BG_COLOR;
 
 	// Can crash in here somewhere if direction is only on x-axis?
 	if(intersection.shape->isTrans) {
@@ -135,7 +132,6 @@ glm::vec3 Algorithms::DirectIllumination(Intersection &intersection, Scene *scen
 			
 			glm::vec3 lightColor = currentLight->GetColor(intersection.position);
 
-			float lightIntensity = 50.0f;
 			float radianceTransfer = surfaceCos*lightCos;
 			float brdf = intersection.shape->OrenNayarBRDF(intersection.ray->direction,shadowRay.direction,intersection.position);
 			radiance += (brdf*radianceTransfer*lightColor*lightIntensity) / (lightSourcePdf);
@@ -236,9 +232,9 @@ glm::vec3 Algorithms::CalcRandomPDFRay(glm::vec3 &normal) {
 
 	//direction = glm::normalize((float)(r2*cos(r1))*rotu + (float)(r2*sin(r1))*rotv + (float)(sqrt(1 - v))*rotw);
 
-	float x = cos(2 * M_PI*u)*sqrt(1 - v);
-	float z = sin(2 * M_PI*u)*sqrt(1 - v);
-	float y = sqrt(v);
+	float x = cos(2 * M_PI*u)*sqrt(v);
+	float z = sin(2 * M_PI*u)*sqrt(v);
+	float y = sqrt(1 - v);
 
 	glm::vec3 randomDirection = glm::normalize(glm::vec3(x, y, z));
 
