@@ -186,7 +186,8 @@ glm::vec3 Algorithms::IndirectIllumination(Intersection &intersection, Scene *sc
 		glm::vec3 surfaceColor = newIntersection.shape->GetColor(newIntersection.position);
 		//float brdf = intersection.shape->LambertianBRDF();
 		// Oren nayar can get weird noise. Fix it!!
-		float brdf = intersection.shape->OrenNayarBRDF(intersection.ray->direction,newRay.direction,intersection.position);
+		float brdf = intersection.shape->OrenNayarBRDF(intersection.ray->direction, newRay.direction, intersection.position);
+
 		newRay.numBounces = intersection.ray->numBounces + 1;
 		newRay.importance = M_PI * brdf * intersection.ray->importance;
 		//radiance = (newRay.importance / intersection.ray->importance)*Radiance(newRay, scene)/((1.0f - absorption));
@@ -224,10 +225,17 @@ glm::vec3 Algorithms::CalcRandomUniformRay(glm::vec3 &normal) {
 // Returns a random ray in the normal oriented hemisphere. Based on the
 // probability distribution function cos(theta)/PI.
 glm::vec3 Algorithms::CalcRandomPDFRay(glm::vec3 &normal) {
-	glm::vec3 direction = glm::vec3(1.0f);
-
 	float u = (float)rand() / RAND_MAX;
 	float v = (float)rand() / RAND_MAX;
+
+	//float r1 = 2 * M_PI * u;
+	//float r2 = sqrt(v);
+
+	//glm::vec3 rotw = normal;
+	//glm::vec3 rotu = glm::cross(abs(rotw.x) > 0.1f ? glm::vec3(0, 1, 0) : glm::vec3(1, 0, 0), normal);
+	//glm::vec3 rotv = glm::cross(rotw, rotu);
+
+	//direction = glm::normalize((float)(r2*cos(r1))*rotu + (float)(r2*sin(r1))*rotv + (float)(sqrt(1 - v))*rotw);
 
 	float x = cos(2 * M_PI*u)*sqrt(v);
 	float z = sin(2 * M_PI*u)*sqrt(v);
@@ -236,6 +244,8 @@ glm::vec3 Algorithms::CalcRandomPDFRay(glm::vec3 &normal) {
 	glm::vec3 randomDirection = glm::normalize(glm::vec3(x, y, z));
 
 	float c = glm::dot(glm::vec3(0, 1, 0), normal);
+
+	glm::vec3 direction;
 	if (c == 1.0f) {
 		direction = randomDirection;
 	}

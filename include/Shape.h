@@ -22,7 +22,7 @@ public:
 
 	bool isLight;
 	bool isTrans;
-	Shape() { isLight = false; isTrans = false; reflectance = 0.9f; roughness = 0.0f;}
+	Shape() { color = glm::vec3(1.0f); isLight = false; isTrans = false; reflectance = 0.9f; roughness = 0.0f; }
 
 	float reflectance;
 	float roughness;

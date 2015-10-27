@@ -34,10 +34,12 @@ glm::vec3 Shape::GetRandomPosition() {
 //Suggestion: Use uniform brdf as standard and move this to oren-nayar subclass or new Material class for speed
 float Shape::OrenNayarBRDF(glm::vec3 &in, glm::vec3 &re, glm::vec3 &pos) {
 	glm::vec3 normal = GetNormal(pos);
+	float length1 = glm::length(normal);
+	float length2 = glm::length(re);
 	float cosThetaIn = std::max(0.0f, glm::dot(-in, normal));
 	float cosThetaRe = std::max(0.0f, glm::dot(re, normal));
 	float cosThetaIn2 = cosThetaIn*cosThetaIn;
-	float cosThetaRe2 = cosThetaRe*cosThetaRe;
+	float cosThetaRe2 = std::min(1.0f, cosThetaRe*cosThetaRe);
 	float sinThetaTanTheta = sqrt((1.0f - cosThetaIn2)*(1.0f - cosThetaRe2))/std::max(cosThetaIn, cosThetaRe); //not 100% about this one
 	glm::vec3 inPlane = glm::normalize(-in - cosThetaIn*normal);
 	glm::vec3 rePlane = glm::normalize(re - cosThetaRe*normal);
