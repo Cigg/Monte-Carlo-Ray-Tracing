@@ -12,9 +12,9 @@
 #include "Plane.h"
 #include "Algorithms.h"
 
-const int imgWidth = 200;
-const int imgHeight = 200;
-const int samplePerPixel = 50;
+const int imgWidth = 512;
+const int imgHeight = 512;
+const int samplePerPixel = 2000;
 
 void FineArt() {
 	std::cout << "\n\n\n\n\n\n";

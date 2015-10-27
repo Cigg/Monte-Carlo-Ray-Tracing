@@ -155,11 +155,11 @@ glm::vec3 Algorithms::IndirectIllumination(Intersection &intersection, Scene *sc
 	glm::vec3 radiance = glm::vec3(0.0f);
 	
 	float absorption = 0.5f;
-	int MAX_ITERATIONS = 5;
+	int MAX_ITERATIONS = 2;
 	
 	//add importance for optimization
 	
-	if(absorption < (float)rand()/RAND_MAX && intersection.ray->numBounces < MAX_ITERATIONS && intersection.ray->importance > 0.05) {
+	if(absorption < (float)rand()/RAND_MAX && intersection.ray->numBounces < MAX_ITERATIONS && intersection.ray->importance > 0.02) {
 		Ray newRay;
 		newRay.origin = intersection.position;
 		glm::vec3 intersectionNormal = intersection.shape->GetNormal(intersection.position);
@@ -185,13 +185,12 @@ glm::vec3 Algorithms::IndirectIllumination(Intersection &intersection, Scene *sc
 
 		glm::vec3 surfaceColor = newIntersection.shape->GetColor(newIntersection.position);
 		//float brdf = intersection.shape->LambertianBRDF();
-		// Oren nayar can get weird noise. Fix it!!
 		float brdf = intersection.shape->OrenNayarBRDF(intersection.ray->direction, newRay.direction, intersection.position);
 
 		newRay.numBounces = intersection.ray->numBounces + 1;
 		newRay.importance = M_PI * brdf * intersection.ray->importance;
-		//radiance = (newRay.importance / intersection.ray->importance)*Radiance(newRay, scene)/((1.0f - absorption));
-		radiance = (float)(M_PI*brdf)*Radiance(newRay, scene) / ((1.0f - absorption));
+		radiance = (newRay.importance / intersection.ray->importance)*Radiance(newRay, scene)/((1.0f - absorption));
+		//radiance = (float)(M_PI*brdf)*Radiance(newRay, scene) / ((1.0f - absorption));
 
 	}
 	
@@ -237,9 +236,9 @@ glm::vec3 Algorithms::CalcRandomPDFRay(glm::vec3 &normal) {
 
 	//direction = glm::normalize((float)(r2*cos(r1))*rotu + (float)(r2*sin(r1))*rotv + (float)(sqrt(1 - v))*rotw);
 
-	float x = cos(2 * M_PI*u)*sqrt(v);
-	float z = sin(2 * M_PI*u)*sqrt(v);
-	float y = sqrt(1 - v);
+	float x = cos(2 * M_PI*u)*sqrt(1 - v);
+	float z = sin(2 * M_PI*u)*sqrt(1 - v);
+	float y = sqrt(v);
 
 	glm::vec3 randomDirection = glm::normalize(glm::vec3(x, y, z));
 

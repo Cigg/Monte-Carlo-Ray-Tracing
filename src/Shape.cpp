@@ -38,7 +38,7 @@ float Shape::OrenNayarBRDF(glm::vec3 &in, glm::vec3 &re, glm::vec3 &pos) {
 	float cosThetaRe = std::max(0.0f, glm::dot(re, normal));
 	float cosThetaIn2 = std::min(1.0f, cosThetaIn*cosThetaIn);
 	float cosThetaRe2 = std::min(1.0f, cosThetaRe*cosThetaRe);
-	float sinThetaTanTheta = sqrt((1.0f - cosThetaIn2)*(1.0f - cosThetaRe2))/std::max(cosThetaIn, cosThetaRe); //not 100% about this one
+	float sinInOutTheta = sqrt((1.0f - cosThetaIn2)*(1.0f - cosThetaRe2));
 	glm::vec3 inPlane = glm::normalize(-in - cosThetaIn*normal);
 	glm::vec3 rePlane = glm::normalize(re - cosThetaRe*normal);
 	float cosPhi = glm::dot(inPlane, rePlane);
@@ -47,7 +47,7 @@ float Shape::OrenNayarBRDF(glm::vec3 &in, glm::vec3 &re, glm::vec3 &pos) {
 	float A = 1.0f - 0.5f*roughness2/(roughness2 + 0.57f);
 	float B = 0.45f*roughness2/(roughness2 + 0.09f);
 
-	return (reflectance/M_PI) * (A + (B * std::max(0.0f, cosPhi) * sinThetaTanTheta));
+	return (reflectance / M_PI) * (A + (B * std::max(0.0f, cosPhi) * sinInOutTheta));
 }
 
 float Shape::LambertianBRDF() {
