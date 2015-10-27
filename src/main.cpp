@@ -1,3 +1,4 @@
+#define GLM_FORCE_RADIANS 
 #include <glm/glm.hpp>
 #include <iostream>
 #include <vector>
@@ -10,8 +11,8 @@
 #include "Walls.h"
 #include "Algorithms.h"
 
-const int imgWidth = 200;
-const int imgHeight = 200;
+const int imgWidth = 512;
+const int imgHeight = 512;
 const int samplePerPixel = 300;
 
 void FineArt() {
@@ -67,14 +68,14 @@ int main() {
 
 	sh = new Sphere(0.2f);
 	sh->isLight = true;
-	sh->SetColor(glm::vec3(1.0f,0.0f,1.0f));
+	sh->SetColor(glm::vec3(1.0f, 0.0f, 1.0f));
 	sh->SetPosition(glm::vec3(0.3, 0.95, 0));
 	scene->addObject(sh);
 	scene->addLight(sh);
 
 	sh = new Sphere(0.2f);
 	sh->isLight = true;
-	sh->SetColor(glm::vec3(0.0f,1.0f,1.0f));
+	sh->SetColor(glm::vec3(0.0f, 1.0f, 1.0f));
 	sh->SetPosition(glm::vec3(-0.3, 0.95, 0));
 	scene->addObject(sh);
 	scene->addLight(sh);

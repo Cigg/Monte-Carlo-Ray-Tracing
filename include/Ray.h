@@ -13,9 +13,7 @@ public:
 	float importance;
 	int numBounces; // 0 for the ray coming from the camera
 
-	void CalcRandomDirection(glm::vec3 &normal);
 	void CalcRefractionDirection(float ratio, glm::vec3 &normal);
-	void InverseCumulativeDistributionFunction(float &phi, float &theta);
 };
 
 #endif // RAY_H

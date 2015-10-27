@@ -37,6 +37,11 @@ glm::vec3 Algorithms::Radiance(Ray &ray, Scene* scene) {
 		return surfaceColor;
 	}
 
+	//return intersection.shape->GetNormal(intersection.position);
+	if (intersection.shape->GetNormal(intersection.position) == glm::vec3(0, 0, -1))
+		return BG_COLOR;
+
+	// Can crash in here somewhere if direction is only on x-axis?
 	if(intersection.shape->isTrans) {
 		//reflection
 		glm::vec3 d = ray.direction;
@@ -78,7 +83,8 @@ glm::vec3 Algorithms::Radiance(Ray &ray, Scene* scene) {
 /************************************************************
  ** Trace, (closest intersection)
  ************************************************************/
-Algorithms::Intersection Algorithms::Trace(Ray &ray, Scene *scene) {
+Algorithms::Intersection Algorithms::Trace(Ray &ray,
+	Scene *scene) {
 	int countShape = scene->shapes->size(); // Number of shapes
 	float t = 10000.0f;
 	Shape* currentShape;
@@ -157,27 +163,96 @@ glm::vec3 Algorithms::IndirectIllumination(Intersection &intersection, Scene *sc
 		Ray newRay;
 		newRay.origin = intersection.position;
 		glm::vec3 intersectionNormal = intersection.shape->GetNormal(intersection.position);
-		newRay.CalcRandomDirection(intersectionNormal);
-		
+
+		//// Uniform sampling of the hemisphere.
+		//newRay.direction = CalcRandomUniformRay(intersectionNormal);
+		//Intersection newIntersection = Trace(newRay, scene);
+		//if(newIntersection.shape == NULL) {
+		//	return radiance;
+		//}
+		//glm::vec3 surfaceColor = newIntersection.shape->GetColor(newIntersection.position);
+		//float newRayCos = std::max(0.0f, glm::dot(intersection.shape->GetNormal(intersection.position), newRay.direction));
+		//float pdf = 1.0f / (2.0f*M_PI); //correct probability distribution for hemisphere?
+		//float brdf = intersection.shape->OrenNayarBRDF(intersection.ray->direction, newRay.direction, intersection.position);
+		//radiance = brdf*newRayCos*Radiance(newRay, scene) / ((1.0f - absorption)*pdf);
+
+		// Importance sampling
+		newRay.direction = CalcRandomPDFRay(intersectionNormal);
 		Intersection newIntersection = Trace(newRay, scene);
-		if(newIntersection.shape == NULL) {
+		if (newIntersection.shape == NULL) {
 			return radiance;
 		}
 
 		glm::vec3 surfaceColor = newIntersection.shape->GetColor(newIntersection.position);
-		//float newRayCos = std::max(0.0f, glm::dot(intersection.shape->GetNormal(intersection.position), newRay.direction));
-		//float pdf = 1.0f/(2.0f*M_PI); //correct probability distribution for hemisphere?
-		float brdf = intersection.shape->LambertianBRDF();
-		//float brdf = intersection.shape->OrenNayarBRDF(intersection.ray->direction,newRay.direction,intersection.position);
-
+		//float brdf = intersection.shape->LambertianBRDF();
+		// Oren nayar can get weird noise. Fix it!!
+		float brdf = intersection.shape->OrenNayarBRDF(intersection.ray->direction,newRay.direction,intersection.position);
 		newRay.numBounces = intersection.ray->numBounces + 1;
 		newRay.importance = M_PI * brdf * intersection.ray->importance;
+		//radiance = (newRay.importance / intersection.ray->importance)*Radiance(newRay, scene)/((1.0f - absorption));
+		radiance = (float)(M_PI*brdf)*Radiance(newRay, scene) / ((1.0f - absorption));
 
-		radiance = (newRay.importance / intersection.ray->importance)*Radiance(newRay, scene)/((1.0f - absorption));
-		//radiance = Radiance(newRay, scene)/((1.0f - absorption));
-		
 	}
 	
 	return radiance;
+}
+
+// Returns a random ray in the normal oriented hemisphere. Uniformly distributed.
+glm::vec3 Algorithms::CalcRandomUniformRay(glm::vec3 &normal) {
+	//alternative
+	//bad random generator? should use modern method?
+	float u = (float)rand() / RAND_MAX;
+	float v = (float)rand() / RAND_MAX;
+
+	//evenly distributed
+	float theta = 2 * M_PI*u;
+	float cosphi = 2 * v - 1;
+	float phi = acos(cosphi);
+
+	float x = cos(theta) * sin(phi);
+	float y = sin(theta) * sin(phi);
+	float z = cosphi;
+	glm::vec3 direction = glm::vec3(x, y, z);
+
+	if (glm::dot(normal, direction) < 0.0f) {
+		direction *= -1.0f;
+	}
 	
+	return direction;
+}
+
+// Returns a random ray in the normal oriented hemisphere. Based on the
+// probability distribution function cos(theta)/PI.
+glm::vec3 Algorithms::CalcRandomPDFRay(glm::vec3 &normal) {
+	glm::vec3 direction = glm::vec3(1.0f);
+
+	float u = (float)rand() / RAND_MAX;
+	float v = (float)rand() / RAND_MAX;
+
+	float x = cos(2 * M_PI*u)*sqrt(v);
+	float z = sin(2 * M_PI*u)*sqrt(v);
+	float y = sqrt(1 - v);
+
+	glm::vec3 randomDirection = glm::normalize(glm::vec3(x, y, z));
+
+	float c = glm::dot(glm::vec3(0, 1, 0), normal);
+	if (c == 1.0f) {
+		direction = randomDirection;
+	}
+	else if (c == -1.0f) {
+		direction = -randomDirection;
+	}
+	else {
+		glm::vec3 cross = glm::cross(glm::vec3(0, 1, 0), normal);
+		float s = glm::length(cross);
+
+		glm::mat3 vx(0, -(cross.z), cross.y,
+			cross.z, 0, -cross.x,
+			-cross.y, cross.x, 0);
+
+		glm::mat3 rot = glm::mat3(1.0f) + vx + vx*vx*(1 - c) / (s * s);
+		direction = glm::normalize(randomDirection*rot);
+	}
+
+	return direction;
 }
