@@ -9,6 +9,7 @@
 #include "Image.h"
 #include "Sphere.h"
 #include "Walls.h"
+#include "Plane.h"
 #include "Algorithms.h"
 
 const int imgWidth = 512;
@@ -80,9 +81,15 @@ int main() {
 	scene->addObject(sh);
 	scene->addLight(sh);
 
+/*	sh = new Plane();
+	sh->isLight = true;
+	sh->SetColor(glm::vec3(1.0f,1.0f,1.0f));
+	sh->SetPosition(glm::vec3(-0.3, 0.95, 0));
+	scene->addObject(sh);
+	scene->addLight(sh);*/
+
 	Image* img = new Image(imgWidth, imgHeight);
 	Camera* cam = new Camera();
-
 	Algorithms* alg = new Algorithms();
 
 	//----------------------------

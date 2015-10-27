@@ -11,7 +11,6 @@ Sphere::Sphere() {
 
 Sphere::Sphere(float r) {
 	radius = r;
-	color = glm::vec3(1.0f);
 }
 
 Sphere::~Sphere() {
