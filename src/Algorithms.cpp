@@ -212,8 +212,8 @@ glm::vec3 Algorithms::RefractedIllumination(Intersection &intersection, Scene *s
 		float R0 = (n1 - n2)/(n1 + n2);
 		R0 = R0*R0;
 		float ncos = 1.0f - cosI;
-		float cosI2 = cosI*cosI;
-		R = R0 + (1.0f - R0)*cosI2*cosI2*cosI;
+		float ncos2 = ncos*ncos;
+		R = R0 + (1.0f - R0)*ncos2*ncos2*ncos;
 	}
 
 
