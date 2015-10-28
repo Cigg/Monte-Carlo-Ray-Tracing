@@ -12,9 +12,9 @@
 #include "Plane.h"
 #include "Algorithms.h"
 
-const int imgWidth = 512;
-const int imgHeight = 512;
-const int samplePerPixel = 1000;
+const int imgWidth = 300;
+const int imgHeight = 300;
+const int samplePerPixel = 500;
 
 void FineArt() {
 	std::cout << "\n\n\n\n\n\n";
@@ -79,7 +79,7 @@ int main() {
 
 	sh = new Sphere(0.3f);
 	sh->isLight = true;
-	sh->SetColor(glm::vec3(1.0f, 1.0f, 1.0f));
+	sh->SetColor(glm::vec3(15.0f));
 	sh->SetPosition(glm::vec3(0, 1, 0));
 	scene->addObject(sh);
 	scene->addLight(sh);

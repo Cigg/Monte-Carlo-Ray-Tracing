@@ -18,7 +18,6 @@ Algorithms::~Algorithms() {
 // Constants
 const glm::vec3 BG_COLOR = glm::vec3(0.0f); // Background color
 const int nShadowRays = 2; // Shadow rays
-const float lightIntensity = 15.0f;
 
 
 /************************************************************
@@ -35,7 +34,7 @@ glm::vec3 Algorithms::Radiance(Ray &ray, Scene* scene) {
 	
 	glm::vec3 surfaceColor = intersection.shape->GetColor(intersection.position);
 	if(intersection.shape->isLight) {
-		return surfaceColor*lightIntensity;
+		return surfaceColor;
 	}
 
 	// Can crash in here somewhere if direction is only on x-axis?
@@ -124,11 +123,9 @@ glm::vec3 Algorithms::IndirectIllumination(Intersection &intersection, Scene *sc
 	glm::vec3 radiance = glm::vec3(0.0f);
 	
 	float absorption = 0.5f;
-	int MAX_ITERATIONS = 2;
+	int MAX_ITERATIONS = 3;
 	
-	//add importance for optimization
-	
-	if(absorption < (float)rand()/RAND_MAX && intersection.ray->numBounces < MAX_ITERATIONS && intersection.ray->importance > 0.02) {
+	if(absorption < (float)rand()/RAND_MAX && intersection.ray->numBounces < MAX_ITERATIONS) {
 		Ray newRay;
 		newRay.origin = intersection.position;
 		glm::vec3 intersectionNormal = intersection.shape->GetNormal(intersection.position);
@@ -203,7 +200,7 @@ glm::vec3 Algorithms::RefractedIllumination(Intersection &intersection, Scene *s
 		//fresnel equations, perhaps try schlick's approximation?
 		float Rt = (n1 * cosI - n2 * cosT) / (n1 * cosI + n2 * cosT);
 		float Rl = (n2 * cosI - n1 * cosT) / (n1 * cosT + n2 * cosI);
-		float R = (Rt*Rt + Rl*Rl)*0.5f;
+		R = (Rt*Rt + Rl*Rl)*0.5f;
 	}
 
 
