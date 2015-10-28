@@ -18,7 +18,7 @@ Algorithms::~Algorithms() {
 // Constants
 const glm::vec3 BG_COLOR = glm::vec3(0.0f); // Background color
 const int nShadowRays = 2; // Shadow rays
-const float lightIntensity = 25.0f;
+const float lightIntensity = 15.0f;
 
 
 /************************************************************
@@ -35,7 +35,7 @@ glm::vec3 Algorithms::Radiance(Ray &ray, Scene* scene) {
 	
 	glm::vec3 surfaceColor = intersection.shape->GetColor(intersection.position);
 	if(intersection.shape->isLight) {
-		return surfaceColor;
+		return surfaceColor*lightIntensity;
 	}
 
 	// Can crash in here somewhere if direction is only on x-axis?
@@ -107,7 +107,7 @@ glm::vec3 Algorithms::DirectIllumination(Intersection &intersection, Scene *scen
 
 			float radianceTransfer = surfaceCos*lightCos;
 			float brdf = intersection.shape->OrenNayarBRDF(intersection.ray->direction,shadowRay.direction,intersection.position);
-			radiance += (brdf*radianceTransfer*lightColor*lightIntensity) / (lightSourcePdf);
+			radiance += (brdf*radianceTransfer*lightColor) / (lightSourcePdf);
 		}
 
 		radiance *= lightPointPdf / nShadowRays;
