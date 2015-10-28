@@ -176,15 +176,16 @@ glm::vec3 Algorithms::RefractedIllumination(Intersection &intersection, Scene *s
 	glm::vec3 incident = intersection.ray->direction;
 	glm::vec3 normal = intersection.shape->GetNormal(intersection.position);
 	float cosI = glm::dot(incident, normal);
-
+	
+	float glassIndex = 1.4f;
 	if(cosI > 0) {
-		n1 = 0.5f;
+		n1 = glassIndex;
 		n2 = 1.0f;
 		//if ray is inside material flip normal
 		normal = glm::vec3(0.0f) - normal;
 	} else {
 		n1 = 1.0f;
-		n2 = 0.5f;
+		n2 = glassIndex;
 		cosI = -cosI;
 	}
 	float ratio = n1/n2;
@@ -196,11 +197,20 @@ glm::vec3 Algorithms::RefractedIllumination(Intersection &intersection, Scene *s
 		R = 1.0f;
 	} else {
 		//calculate reflection chance
+		//Fresnel factor
+		/*
 		float cosT = sqrt(1.0f - sinT2);
-		//fresnel equations, perhaps try schlick's approximation?
 		float Rt = (n1 * cosI - n2 * cosT) / (n1 * cosI + n2 * cosT);
 		float Rl = (n2 * cosI - n1 * cosT) / (n1 * cosT + n2 * cosI);
 		R = (Rt*Rt + Rl*Rl)*0.5f;
+		*/
+
+		//Schlick's approximation of fresnel factor
+		float R0 = (n1 - n2)/(n1 + n2);
+		R0 = R0*R0;
+		float ncos = 1.0f - cosI;
+		float ncos2 = ncos*ncos;
+		R = R0 + (1.0f - R0)*ncos2*ncos2*ncos;
 	}
 
 
