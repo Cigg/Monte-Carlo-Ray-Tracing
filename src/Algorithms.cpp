@@ -40,34 +40,7 @@ glm::vec3 Algorithms::Radiance(Ray &ray, Scene* scene) {
 
 	// Can crash in here somewhere if direction is only on x-axis?
 	if(intersection.shape->isTrans) {
-		//reflection
-		glm::vec3 d = ray.direction;
-		glm::vec3 n = intersection.shape->GetNormal(intersection.position);
-		Ray reflectionRay;
-		reflectionRay.origin = intersection.position;
-		float cosIn = glm::dot(d,n);
-		reflectionRay.direction = d - 2.0f*cosIn*n;
-
-		glm::vec3 reflectionRadiance = Radiance(reflectionRay, scene);
-		
-		//refraction
-		Ray refractionRay;
-		refractionRay.origin = intersection.position;
-		refractionRay.direction = ray.direction;
-		float snellRatio = 0.5f; // airdensity/glassdensity
-		refractionRay.CalcRefractionDirection(snellRatio, n);
-		
-		//hardcoded for spheres at the moment
-		glm::vec3 l = intersection.shape->GetPosition() - refractionRay.origin;
-		float tmiddle = glm::dot(l, ray.direction);
-		glm::vec3 refractionOutPosition = refractionRay.origin + 2.0f*tmiddle*refractionRay.direction;
-		
-		refractionRay.origin = refractionOutPosition;
-		glm::vec3 refractionNormal = -intersection.shape->GetNormal(refractionOutPosition);
-		refractionRay.CalcRefractionDirection(snellRatio, refractionNormal);
-		glm::vec3 refractionRadiance = Radiance(refractionRay, scene);
-		
-		return 0.2f*reflectionRadiance + 0.8f*refractionRadiance;
+		return RefractedIllumination(intersection, scene);
 	}
 	
 	radiance += DirectIllumination(intersection, scene);
@@ -191,6 +164,60 @@ glm::vec3 Algorithms::IndirectIllumination(Intersection &intersection, Scene *sc
 	}
 	
 	return radiance;
+}
+
+/************************************************************
+ ** RefractedIllumination
+ ************************************************************/
+glm::vec3 Algorithms::RefractedIllumination(Intersection &intersection, Scene *scene) {
+	const int MAX_ITERATIONS = 4;
+	if(intersection.ray->numBounces > MAX_ITERATIONS) {
+		return glm::vec3(0.0f);
+	}
+	
+	float n1, n2;
+	glm::vec3 incident = intersection.ray->direction;
+	glm::vec3 normal = intersection.shape->GetNormal(intersection.position);
+	float cosI = glm::dot(incident, normal);
+
+	if(cosI > 0) {
+		n1 = 0.9f;
+		n2 = 1.0f;
+		//if ray is inside material flip normal
+		normal = glm::vec3(0.0f) - normal;
+	} else {
+		n1 = 1.0f;
+		n2 = 0.9f;
+		cosI = -cosI;
+	}
+	float ratio = n1/n2;
+	float sinT2 = ratio*ratio * (1.0f - cosI*cosI);
+
+	float R;
+	if(sinT2 > 1.0f) {
+		//total internal reflection
+		R = 1.0f;
+	} else {
+		//calculate reflection chance
+		float cosT = sqrt(1.0f - sinT2);
+		//fresnel equations, perhaps try schlick's approximation?
+		float Rt = (n1 * cosI - n2 * cosT) / (n1 * cosI + n2 * cosT);
+		float Rl = (n2 * cosI - n1 * cosT) / (n1 * cosT + n2 * cosI);
+		float R = (Rt*Rt + Rl*Rl)*0.5f;
+	}
+
+	float r01 = (float)rand() / RAND_MAX;
+	if(r01 < R) {
+		//reflection
+		Ray reflectionRay;
+		reflectionRay.origin = intersection.position;
+		reflectionRay.direction = incident + 2.0f*cosI*normal;
+		reflectionRay.numBounces = intersection.ray->numBounces + 1;
+		return Radiance(reflectionRay, scene);
+	} else {
+		//refraction
+		return glm::vec3(0.0f);
+	}
 }
 
 // Returns a random ray in the normal oriented hemisphere. Uniformly distributed.

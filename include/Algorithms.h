@@ -23,6 +23,7 @@ public:
 	glm::vec3 Radiance(Ray &ray, Scene *scene);
 	glm::vec3 DirectIllumination(Intersection &intersection, Scene *scene);
 	glm::vec3 IndirectIllumination(Intersection &intersection, Scene *scene);
+	glm::vec3 RefractedIllumination(Intersection &intersection, Scene *scene);
 	glm::vec3 CalcRandomUniformRay(glm::vec3 &normal);
 	glm::vec3 CalcRandomPDFRay(glm::vec3 &normal);
 };
