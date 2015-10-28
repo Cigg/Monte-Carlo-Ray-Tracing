@@ -179,15 +179,16 @@ glm::vec3 Algorithms::RefractedIllumination(Intersection &intersection, Scene *s
 	glm::vec3 incident = intersection.ray->direction;
 	glm::vec3 normal = intersection.shape->GetNormal(intersection.position);
 	float cosI = glm::dot(incident, normal);
-
+	
+	float glassIndex = 1.4f;
 	if(cosI > 0) {
-		n1 = 0.5f;
+		n1 = glassIndex;
 		n2 = 1.0f;
 		//if ray is inside material flip normal
 		normal = glm::vec3(0.0f) - normal;
 	} else {
 		n1 = 1.0f;
-		n2 = 0.5f;
+		n2 = glassIndex;
 		cosI = -cosI;
 	}
 	float ratio = n1/n2;
