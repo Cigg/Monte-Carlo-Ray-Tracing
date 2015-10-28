@@ -12,8 +12,8 @@
 #include "Plane.h"
 #include "Algorithms.h"
 
-const int imgWidth = 300;
-const int imgHeight = 300;
+const int imgWidth = 512;
+const int imgHeight = 512;
 const int samplePerPixel = 200;
 
 void FineArt() {
@@ -55,13 +55,13 @@ int main() {
 
 	sh = new Sphere(0.3f);
 	sh->SetPosition(glm::vec3(0.5f, -0.1f, -0.5f));
-	sh->SetColor(glm::vec3(0.3f, 1.0f, 0.3f));
+	sh->SetColor(glm::vec3(1.0f));
 	sh->roughness = 0.0f;
 	scene->addObject(sh);
 
 	sh = new Sphere(0.3f);
 	sh->SetPosition(glm::vec3(-0.5f, -0.1f, -0.5f));
-	sh->SetColor(glm::vec3(0.3f, 1.0f, 0.3f));
+	sh->SetColor(glm::vec3(1.0f));
 	sh->roughness = 1.0f;
 	scene->addObject(sh);
 
@@ -79,7 +79,7 @@ int main() {
 
 	sh = new Sphere(0.3f);
 	sh->isLight = true;
-	sh->SetColor(glm::vec3(15.0f));
+	sh->SetColor(glm::vec3(10.0f));
 	sh->SetPosition(glm::vec3(0, 1, 0));
 	scene->addObject(sh);
 	scene->addLight(sh);
@@ -110,6 +110,7 @@ int main() {
 			}
 
 			color /= samplePerPixel;
+
 			img->SetPixel(x, y, color);
 		}
 		#pragma omp critical

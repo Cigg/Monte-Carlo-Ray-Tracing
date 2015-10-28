@@ -87,10 +87,10 @@ glm::vec3 Walls::GetColor(glm::vec3 &pos) {
 
     float epsilon = 0.0001;
     if(pos.x < xl + epsilon) {
-        color = glm::vec3(1.0f, 0.3f, 0.3f);
+        color = glm::vec3(0.75f, 0.25f, 0.25f);
     }
     else if(pos.x > xr - epsilon) {
-        color = glm::vec3(0.3f, 0.3f, 1.0f);
+        color = glm::vec3(0.25f, 0.25f, 0.75f);
     } else if(pos.z > zr - epsilon) {
         color = glm::vec3(0.0f);
     }
