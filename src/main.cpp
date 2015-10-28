@@ -53,43 +53,44 @@ int main() {
 	sh = new Walls();
 	scene->addObject(sh);
 
+	// Two white spheres
 	sh = new Sphere(0.3f);
-	sh->SetPosition(glm::vec3(0.5f, -0.1f, -0.5f));
+	sh->SetPosition(glm::vec3(-0.55f, -0.2f, -0.55f));
 	sh->SetColor(glm::vec3(1.0f));
 	sh->roughness = 0.0f;
 	scene->addObject(sh);
 
 	sh = new Sphere(0.3f);
-	sh->SetPosition(glm::vec3(-0.5f, -0.1f, -0.5f));
+	sh->SetPosition(glm::vec3(0.55f, -0.2f, -0.55f));
 	sh->SetColor(glm::vec3(1.0f));
 	sh->roughness = 1.0f;
 	scene->addObject(sh);
 
+	// Two glass spheres
 	sh = new Sphere(0.3f);
 	sh->isTrans = true;
-	sh->SetPosition(glm::vec3(0.0f, -0.2f, 0.3f));
+	sh->SetPosition(glm::vec3(-0.55f, -0.7f, 0.55f));
 	scene->addObject(sh);
 
-	//sh = new Sphere(0.2f);
-	//sh->isLight = true;
-	//sh->SetColor(glm::vec3(1.0f, 0.0f, 1.0f));
-	//sh->SetPosition(glm::vec3(0.3, 0.95, 0));
-	//scene->addObject(sh);
-	//scene->addLight(sh);
-
 	sh = new Sphere(0.3f);
+	sh->isTrans = true;
+	sh->SetPosition(glm::vec3(0.55f, -0.7f, 0.55f));
+	scene->addObject(sh);
+
+	// Two lights
+	sh = new Sphere(0.25f);
 	sh->isLight = true;
-	sh->SetColor(glm::vec3(10.0f));
-	sh->SetPosition(glm::vec3(0, 1, 0));
+	sh->SetColor(glm::vec3(6.0f));
+	sh->SetPosition(glm::vec3(-0.3f, 1.0f, -0.3f));
 	scene->addObject(sh);
 	scene->addLight(sh);
 
-/*	sh = new Plane();
+	sh = new Sphere(0.25f);
 	sh->isLight = true;
-	sh->SetColor(glm::vec3(1.0f,1.0f,1.0f));
-	sh->SetPosition(glm::vec3(-0.3, 0.95, 0));
+	sh->SetColor(glm::vec3(6.0f));
+	sh->SetPosition(glm::vec3(0.3f, 1.0f, 0.3f));
 	scene->addObject(sh);
-	scene->addLight(sh);*/
+	scene->addLight(sh);
 
 	Image* img = new Image(imgWidth, imgHeight);
 	Camera* cam = new Camera();

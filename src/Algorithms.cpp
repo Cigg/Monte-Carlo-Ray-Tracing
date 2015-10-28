@@ -18,8 +18,7 @@ Algorithms::~Algorithms() {
 // Constants
 const glm::vec3 BG_COLOR = glm::vec3(0.0f); // Background color
 const int nShadowRays = 1; // Shadow rays
-const int nIndirectRays = 1;
-const int maxDepth = 3;
+const int maxDepth = 5;
 
 
 /************************************************************
@@ -127,39 +126,36 @@ glm::vec3 Algorithms::IndirectIllumination(Intersection &intersection, Scene *sc
 	//float absorption = 0.5f;
 	glm::vec3 c = intersection.shape->GetColor(intersection.position);
 	glm::vec3 intersectionNormal = intersection.shape->GetNormal(intersection.position);
-
 	float absorption = c.x>c.y && c.x>c.z ? c.x : c.y>c.z ? c.y : c.z;
-	for(int i = 0; i < nIndirectRays; i++) {
-		if(absorption > (float)rand()/RAND_MAX && intersection.ray->depth < maxDepth) {
-			Ray newRay;
-			newRay.origin = intersection.position;
+	if(absorption > (float)rand()/RAND_MAX && intersection.ray->depth < maxDepth) {
+		Ray newRay;
+		newRay.origin = intersection.position;
 
-			// // Uniform sampling of the hemisphere.
-			// newRay.direction = CalcRandomUniformRay(intersectionNormal);
-			// Intersection newIntersection = Trace(newRay, scene);
-			// if(newIntersection.shape) {
-			// 	float newRayCos = std::max(0.0f, glm::dot(intersection.shape->GetNormal(intersection.position), newRay.direction));
-			// 	float pdf = 1.0f / (2.0f*M_PI); //correct probability distribution for hemisphere?
-			// 	float brdf = intersection.shape->OrenNayarBRDF(intersection.ray->direction, newRay.direction, intersection.position);
-			// 	radiance += brdf*newRayCos*Radiance(newRay, scene) / (absorption*pdf);
-			// }
+		// // Uniform sampling of the hemisphere.
+		// newRay.direction = CalcRandomUniformRay(intersectionNormal);
+		// Intersection newIntersection = Trace(newRay, scene);
+		// if(newIntersection.shape) {
+		// 	float newRayCos = std::max(0.0f, glm::dot(intersection.shape->GetNormal(intersection.position), newRay.direction));
+		// 	float pdf = 1.0f / (2.0f*M_PI); //correct probability distribution for hemisphere?
+		// 	float brdf = intersection.shape->OrenNayarBRDF(intersection.ray->direction, newRay.direction, intersection.position);
+		// 	radiance += brdf*newRayCos*Radiance(newRay, scene) / (absorption*pdf);
+		// }
 
-			// Importance sampling
-			newRay.direction = CalcRandomPDFRay(intersectionNormal);
-			Intersection newIntersection = Trace(newRay, scene);
-			if (newIntersection.shape) {
-				//float brdf = intersection.shape->LambertianBRDF();
-				float brdf = intersection.shape->OrenNayarBRDF(intersection.ray->direction, newRay.direction, intersection.position);
+		// Importance sampling
+		newRay.direction = CalcRandomPDFRay(intersectionNormal);
+		Intersection newIntersection = Trace(newRay, scene);
+		if (newIntersection.shape) {
+			//float brdf = intersection.shape->LambertianBRDF();
+			float brdf = intersection.shape->OrenNayarBRDF(intersection.ray->direction, newRay.direction, intersection.position);
 
-				newRay.depth = intersection.ray->depth + 1;
-				newRay.importance = M_PI * brdf * intersection.ray->importance;
-				radiance += (newRay.importance / intersection.ray->importance)*Radiance(newRay, scene)/(absorption);
-				//radiance = (float)(M_PI*brdf)*Radiance(newRay, scene) / (absorption);
-			}
+			newRay.depth = intersection.ray->depth + 1;
+			newRay.importance = M_PI * brdf * intersection.ray->importance;
+			radiance += (newRay.importance / intersection.ray->importance)*Radiance(newRay, scene)/(absorption);
+			//radiance = (float)(M_PI*brdf)*Radiance(newRay, scene) / (absorption);
 		}
 	}
-	
-	return radiance /= nIndirectRays;
+
+	return radiance;
 }
 
 /************************************************************

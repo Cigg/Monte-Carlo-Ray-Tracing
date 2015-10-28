@@ -68,11 +68,6 @@ bool Walls::Intersect(const Ray &ray, float &hitDist) {
     	return false;
     }
 
-    // We don't have a front wall
-    // if(zmin > min) {
-    // 	min = zmin;
-    // }
-
     if(zmax < max) {
     	max = zmax;
     }
@@ -83,7 +78,7 @@ bool Walls::Intersect(const Ray &ray, float &hitDist) {
 }
 
 glm::vec3 Walls::GetColor(glm::vec3 &pos) {
-    glm::vec3 color = glm::vec3(0.8f);
+    glm::vec3 color = glm::vec3(0.75f);
 
     float epsilon = 0.0001;
     if(pos.x < xl + epsilon) {
