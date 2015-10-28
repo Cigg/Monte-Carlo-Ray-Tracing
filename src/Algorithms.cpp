@@ -223,7 +223,7 @@ glm::vec3 Algorithms::RefractedIllumination(Intersection &intersection, Scene *s
 		newRay.direction = incident + 2.0f*cosI*normal;
 	} else {
 		//refraction
-		newRay.direction = ratio*incident + normal*(ratio*cosI - sqrt(1.0f - sinT2));
+		newRay.direction = ratio*incident + normal*(float)(ratio*cosI - sqrt(1.0f - sinT2));
 	}
 	return Radiance(newRay, scene);
 }
