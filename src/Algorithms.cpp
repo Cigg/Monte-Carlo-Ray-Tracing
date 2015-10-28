@@ -68,7 +68,7 @@ Algorithms::Intersection Algorithms::Trace(Ray &ray,
 		float tmp;
 		currentShape = scene->shapes->at(n);
 		if(currentShape->Intersect(ray, tmp)) {
-			if(tmp < t) {
+			if(tmp > 0.0001f && tmp < t) {
 				t = tmp;
 				intersection.shape = currentShape;
 			}
@@ -206,18 +206,19 @@ glm::vec3 Algorithms::RefractedIllumination(Intersection &intersection, Scene *s
 		float R = (Rt*Rt + Rl*Rl)*0.5f;
 	}
 
+
+	Ray newRay;
+	newRay.origin = intersection.position;
+	newRay.numBounces = intersection.ray->numBounces + 1;
 	float r01 = (float)rand() / RAND_MAX;
 	if(r01 < R) {
 		//reflection
-		Ray reflectionRay;
-		reflectionRay.origin = intersection.position;
-		reflectionRay.direction = incident + 2.0f*cosI*normal;
-		reflectionRay.numBounces = intersection.ray->numBounces + 1;
-		return Radiance(reflectionRay, scene);
+		newRay.direction = incident + 2.0f*cosI*normal;
 	} else {
 		//refraction
-		return glm::vec3(0.0f);
+		newRay.direction = ratio*incident + normal*(ratio*cosI - sqrt(1.0f - sinT2));
 	}
+	return Radiance(newRay, scene);
 }
 
 // Returns a random ray in the normal oriented hemisphere. Uniformly distributed.

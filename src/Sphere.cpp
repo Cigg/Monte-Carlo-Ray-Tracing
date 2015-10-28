@@ -23,8 +23,8 @@ bool Sphere::Intersect(const Ray &ray, float &hitDist) {
 
     // Dist to position in the middle of the two intersection points of the sphere
     float tmiddle = glm::dot(l, ray.direction);
-    if (tmiddle < 0)
-    	return false;
+    //if (tmiddle < 0)
+    //	return false;
 
     // (Dist from center of the sphere to the position in the middle of the two intersection points)^2
     float d2 = glm::dot(l, l) - tmiddle * tmiddle;
@@ -38,6 +38,9 @@ bool Sphere::Intersect(const Ray &ray, float &hitDist) {
     hitDist = tmiddle - t; 
     // Distance to second intersection point
     // hitDist2 = tca + thc; 
+	if(hitDist < 0) {
+		hitDist += abs(tmiddle*2.0f);
+	}
 
     return true; 
 }
