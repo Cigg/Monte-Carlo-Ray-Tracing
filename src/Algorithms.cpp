@@ -200,11 +200,20 @@ glm::vec3 Algorithms::RefractedIllumination(Intersection &intersection, Scene *s
 		R = 1.0f;
 	} else {
 		//calculate reflection chance
+		//Fresnel factor
+		/*
 		float cosT = sqrt(1.0f - sinT2);
-		//fresnel equations
 		float Rt = (n1 * cosI - n2 * cosT) / (n1 * cosI + n2 * cosT);
 		float Rl = (n2 * cosI - n1 * cosT) / (n1 * cosT + n2 * cosI);
 		R = (Rt*Rt + Rl*Rl)*0.5f;
+		*/
+
+		//Schlick's approximation of fresnel factor
+		float R0 = (n1 - n2)/(n1 + n2);
+		R0 = R0*R0;
+		float ncos = 1.0f - cosI;
+		float cosI2 = cosI*cosI;
+		R = R0 + (1.0f - R0)*cosI2*cosI2*cosI;
 	}
 
 
