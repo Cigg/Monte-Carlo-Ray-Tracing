@@ -181,13 +181,13 @@ glm::vec3 Algorithms::RefractedIllumination(Intersection &intersection, Scene *s
 	float cosI = glm::dot(incident, normal);
 
 	if(cosI > 0) {
-		n1 = 0.9f;
+		n1 = 0.5f;
 		n2 = 1.0f;
 		//if ray is inside material flip normal
 		normal = glm::vec3(0.0f) - normal;
 	} else {
 		n1 = 1.0f;
-		n2 = 0.9f;
+		n2 = 0.5f;
 		cosI = -cosI;
 	}
 	float ratio = n1/n2;
